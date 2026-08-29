@@ -51,7 +51,7 @@
 | Внешнее представление | Событие | Ключ идемпотентности | Повторяемость | Потребители |
 |---|---|---|---|---|
 | `document.ingested` | `DocumentIngested` | `(sourceRef, revision)` | Повторная поставка игнорируется | Оркестрация индексации, мониторинг |
-| `knowledge.base.updated` | `KnowledgeBaseUpdated` | `stateVersion` | Повторное уведомление о состоянии | Query Engine, context compiler |
+| `knowledge.base.updated` | `KnowledgeBaseUpdated` | `stateVersion` | Повторное уведомление о состоянии | Движок запросов, context compiler |
 | `ontology.updated` | `OntologyUpdated` | `ontologyVersion` | Повторное уведомление о версии | Резолвинг, контексты |
 | `query.answered` | `QueryAnswered` | `answerId` | Повторная доставка ответа | UI, MCP, метрики |
 | `influence.computed` | `InfluenceComputed` | `analysisRunId` | Повторная выдача результата | Пользователи, context compiler |

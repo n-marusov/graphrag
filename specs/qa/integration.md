@@ -21,7 +21,7 @@ flowchart BT
 | Параметр | Правило проекта |
 |---|---|
 | Основная база | `../vision.md` (§1.3, §2.1–2.2), `../glossary.md`, `../adr/README.md`; каталоги требований и реестр контрактов — планируются (vision.md §2.2); C4-модель — планируется (референс: `.ai-factory/references/mermaid-c4-diagrams.md`) |
-| Объект | Взаимодействие модулей GraphRAG (ядро, оркестрация пайплайнов, query engine, MCP-сервер, интеграции, CPU-компоненты), тестового контура и внешних систем (GitLab, LLM-контур) |
+| Объект | Взаимодействие модулей GraphRAG (ядро, оркестрация пайплайнов, движок запросов, MCP-сервер, интеграции, CPU-компоненты), тестового контура и внешних систем (GitLab, LLM-контур) |
 | Среда | Основной интеграционный стенд, тестовый контур, CI (целевое состояние); GPU-контур для GPU-специфичных проверок |
 | Время | Минуты; набор тяжелее unit, но должен быть воспроизводимым |
 | Выходной критерий | Контрактные, доменные, негативные и каскадные сценарии проходят с артефактами прогона |
@@ -62,7 +62,7 @@ flowchart BT
 
 | Объект | Что проверять |
 |---|---|
-| Внутренние контракты модулей | Интерфейсы пакетов, EventBus, хранилище графа/векторов между ядром, оркестрацией пайплайнов, query engine, MCP-сервером, интеграциями и CPU-компонентами |
+| Внутренние контракты модулей | Интерфейсы пакетов, EventBus, хранилище графа/векторов между ядром, оркестрацией пайплайнов, движок запросов, MCP-сервером, интеграциями и CPU-компонентами |
 | Контракты с внешними системами | GitLab API/webhook/MR (индексация корпуса), HTTP API (запросы, метрики), MCP (JSON-RPC: tools/resources/prompts), LLM-inference endpoint (OpenAI-совместимый), хранилище графа и векторного индекса (выбор открыт — ADR-IMPL.DATA.graph-storage), мониторинг/аудит (SecurityEventEmitted) |
 | Каскады событий | DocumentIngested → EntityExtracted → GraphUpdated → CommunityRecomputed; OntologyUpdated → пересчёт резолвинга; InfluenceComputed → сигнал владельцу; ConflictDetected → сигнал на изменение источника; ContextCompiled → ReviewCompleted; SecurityEventEmitted → ИБ |
 | Инфраструктура | Хранилище графа/векторов, инкрементальное обновление, GPU-контур (драйверы, CUDA, рантайм моделей), мониторинг/аудит |
@@ -196,7 +196,7 @@ Artifacts: ci-job-<id>, logs/run-k1-<дата>.zip
 | Интерфейсы пакетов ядра | ядро ↔ оркестрация пайплайнов | `../src/README.md`; спецификации — (TBD) | F2 (K1) |
 | EventBus (паттерн) | модуль ↔ модуль | — | каскады событий (vision.md §2.4) |
 | Хранилище графа/векторов | модули ↔ хранилище | выбор открыт — ADR-IMPL.DATA.graph-storage | F1, F2 |
-| Контракты query engine | query engine ↔ MCP-сервер / HTTP API | `../src/README.md`; спецификации — (TBD) | F1 (K1, K4, K5) |
+| Контракты движка запросов | движок запросов ↔ MCP-сервер / HTTP API | `../src/README.md`; спецификации — (TBD) | F1 (K1, K4, K5) |
 | MCP-контракт (JSON-RPC: tools/resources/prompts) | MCP-сервер ↔ ИИ-агенты | `../src/README.md`; спецификации — (TBD) | F4 (K17) |
 
 Проверять:
@@ -213,9 +213,9 @@ Artifacts: ci-job-<id>, logs/run-k1-<дата>.zip
 | Канал | Контракт | Направление | Доменные сценарии |
 |---|---|---|---|
 | GitLab API/webhook/MR | `../vision.md` §2.8; спецификации — (TBD) | GitLab → оркестрация пайплайнов | F2 (индексация) |
-| HTTP API (запросы, метрики) | (TBD) | клиенты ↔ query engine | F1, G1 |
+| HTTP API (запросы, метрики) | (TBD) | клиенты ↔ движок запросов | F1, G1 |
 | MCP (JSON-RPC: tools/resources/prompts) | (TBD) | ИИ-агенты ↔ MCP-сервер | F4 |
-| LLM-inference endpoint (OpenAI-совместимый) | (TBD) | query engine/извлечение ↔ GPU-контур | F2, F1, REQ-NFR-security.compliance.llm-contour |
+| LLM-inference endpoint (OpenAI-совместимый) | (TBD) | движок запросов/извлечение ↔ GPU-контур | F2, F1, REQ-NFR-security.compliance.llm-contour |
 | Хранилище графа и векторного индекса | выбор открыт — ADR-IMPL.DATA.graph-storage | модули ↔ хранилище | F1, F2 |
 | Мониторинг и аудит | (TBD) | система → ИБ/мониторинг | REQ-NFR-security.compliance.llm-contour (SecurityEventEmitted) |
 
@@ -258,7 +258,7 @@ Artifacts: ci-job-<id>, logs/run-k1-<дата>.zip
 | Стенд | Состав | Назначение |
 |---|---|---|
 | Dev / CI быстрый набор | Модули как процессы; `go test -race`; lint (golangci-lint); контрактные тесты K1/K4/K5/K17 | unit + build smoke + быстрые контрактные/integration проверки на MR/push (целевое состояние CI) |
-| Основной стенд интеграции | Реальные процессы контура GraphRAG (ядро, оркестрация пайплайнов, query engine, MCP-сервер, интеграции, CPU-компоненты) + тестовый контур | интеграционные и часть E2E API сценариев |
+| Основной стенд интеграции | Реальные процессы контура GraphRAG (ядро, оркестрация пайплайнов, движок запросов, MCP-сервер, интеграции, CPU-компоненты) + тестовый контур | интеграционные и часть E2E API сценариев |
 | GPU-матрица | Разные GPU/драйверы/CUDA/рантаймы (Linux, NVIDIA, open-weight) | GPU-специфичные проверки, развёртывание контура LLM, квантование |
 | E2E API стенд | Полный контур GraphRAG + тестовый контур | сквозные сценарии «документ → граф → ответ с grounding» |
 
@@ -292,7 +292,7 @@ Artifacts: ci-job-<id>, logs/run-k1-<дата>.zip
 
 Примеры:
 
-- проверяем `query engine → LLM-контур` → реальный `query engine`, эмулятор LLM (детерминированные golden-ответы);
+- проверяем `движок запросов → LLM-контур` → реальный `движок запросов`, эмулятор LLM (детерминированные golden-ответы);
 - проверяем `интеграция GitLab → оркестрация пайплайнов` → реальные оба модуля, заглушка GitLab;
 - проверяем `оркестрация → хранилище графа` → реальный модуль + тестовое хранилище графа/векторов;
 - проверяем MCP-компилятор → реальный MCP-сервер + тестовый MCP-клиент (агент-заглушка).
@@ -324,8 +324,8 @@ Artifacts: ci-job-<id>, logs/run-k1-<дата>.zip
 |---|---|---|
 | Ядро | события предметной области, EventBus, оркестрация потоков | EventBus, хранилище графа/векторов, интеграции |
 | Оркестрация пайплайнов (F2) | индексация корпуса: DocumentIngested → EntityExtracted → GraphUpdated → CommunityRecomputed; обработка PDF (RAPTOR/StructRAG); mutual indexing | GitLab API/webhook/MR, CPU-компоненты, хранилище, LLM-контур |
-| Query engine (F1) | запросы: dual-level retrieval (LightRAG), PathRAG (без map-reduce), PPR, multi-hop, grounding (QueryAnswered), детекция противоречий (ConflictDetected), LLM-as-judge | LLM-inference endpoint, хранилище графа/векторов, HTTP API |
-| MCP-сервер (F4) | компиляция контекста агенту (ContextCompiled), сверка со спецификациями (ReviewCompleted), предзавершающий гейт, QA-контекст | MCP (JSON-RPC: tools/resources/prompts), query engine |
+| Движок запросов (F1) | запросы: dual-level retrieval (LightRAG), PathRAG (без map-reduce), PPR, multi-hop, grounding (QueryAnswered), детекция противоречий (ConflictDetected), LLM-as-judge | LLM-inference endpoint, хранилище графа/векторов, HTTP API |
+| MCP-сервер (F4) | компиляция контекста агенту (ContextCompiled), сверка со спецификациями (ReviewCompleted), предзавершающий гейт, QA-контекст | MCP (JSON-RPC: tools/resources/prompts), движок запросов |
 | Интеграции | GitLab (authoritative-источник корпуса), GPU-контур | GitLab API/webhook/MR, OpenAI-совместимый inference endpoint |
 | CPU-компоненты | Leiden (сообщества), HNSW (векторный индекс), токенизатор; CGo при необходимости | оркестрация, хранилище |
 
@@ -345,10 +345,10 @@ Artifacts: ci-job-<id>, logs/run-k1-<дата>.zip
 |---|---|
 | Контракт GitLab (индексация) | оркестрация пайплайнов + заглушка GitLab + тестовое хранилище графа |
 | Инкрементальное обновление графа | оркестрация + тестовое хранилище + эмулятор LLM (извлечение) |
-| Запрос через HTTP API | query engine + хранилище + эмулятор LLM |
-| MCP-контракт (F4) | MCP-сервер + query engine + эмулятор LLM |
+| Запрос через HTTP API | движок запросов + хранилище + эмулятор LLM |
+| MCP-контракт (F4) | MCP-сервер + движок запросов + эмулятор LLM |
 | Обработка PDF (RAPTOR/StructRAG) | оркестрация + CPU-компоненты + эмулятор LLM |
-| Контур LLM (REQ-NFR-security.compliance.llm-contour) | query engine + эмулятор LLM (или реальный GPU-контур) + аудит-заглушка |
+| Контур LLM (REQ-NFR-security.compliance.llm-contour) | движок запросов + эмулятор LLM (или реальный GPU-контур) + аудит-заглушка |
 | Domain cascade | все реальные процессы цепочки + нужные заглушки тестового контура |
 
 ---
@@ -539,7 +539,7 @@ Negative/boundary:
 
 - запрос агента вне компетенции системы;
 - контекст превышает лимит токенов — минимизация контекста;
-- недоступный query engine — контролируемая ошибка.
+- недоступный движок запросов — контролируемая ошибка.
 
 ### 11.7. Сквозное требование: безопасный контур LLM (REQ-NFR-security.compliance.llm-contour)
 
@@ -709,7 +709,7 @@ Scenario <ID>: passed.
 | Вектор | Пример | Механизм обнаружения |
 |---|---|---|
 | «Зелёный» отчёт без прогона | заявлено «K1, <scenario-id> прошли» без логов | обязательные артефакты §16.4 |
-| Заглушка вместо реального компонента | проверяемый модуль (например, query engine) заменён эмулятором | правило §8.1: stub только на внешнем стыке |
+| Заглушка вместо реального компонента | проверяемый модуль (например, движок запросов) заменён эмулятором | правило §8.1: stub только на внешнем стыке |
 | Слабый oracle | «ответ получен» вместо проверки схемы/состояния | conformance-проверки (шаг 2 раздела 10) и assertions §14 |
 | Пропуск negative cases | security-gap-сценарии не запускались | обязательный шаг 4 и DoD §18 |
 | Сокращённый каскад | проверен один ответ без downstream-событий | правила каскадов §6.3 |
@@ -1115,7 +1115,7 @@ func TestGraphUpdated_RecomputesCommunities(t *testing.T) {
 - `../vision.md` — цели G1–G7, функции F1–F4, события предметной области (§2.4), внешние зависимости (§2.8), метрики.
 - `../glossary.md` — глоссарий терминов.
 - `../adr/README.md` — реестр ADR (в т.ч. ADR-IMPL.STACK.go-single-language-adoption, ADR-IMPL.DATA.graph-storage).
-- `../src/README.md` — описание модулей: ядро, оркестрация пайплайнов (F2), query engine (F1), MCP-сервер (F4), интеграции, CPU-компоненты.
+- `../src/README.md` — описание модулей: ядро, оркестрация пайплайнов (F2), движок запросов (F1), MCP-сервер (F4), интеграции, CPU-компоненты.
 - `../../.ai-factory/RESEARCH.md` — исследования методов (LightRAG, KAG, PathRAG, PPR, RAPTOR/StructRAG).
 - `../../.ai-factory/PLAN.md` — план реализации.
 - `../../.ai-factory/RULES.md` — правила проекта.

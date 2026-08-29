@@ -11,7 +11,7 @@ GraphRAG — корпоративная система знаний на баз�
 Сопоставление референсов ([01-principles](../../.ai-factory/references/graphrag/01-principles.md) … [07-implementation-methodology](../../.ai-factory/references/graphrag/07-implementation-methodology.md)) с контейнерной моделью ([container.md](../../specs/c4/container.md)) даёт три факта, определяющих границы контейнеров:
 
 1. **Два пути с разными характеристиками: индексация (offline) и запрос (online).** Референсный pipeline ([01-principles] §3) и high-level архитектура ([05-design-guide] §3.1: Ingest Pipeline → Knowledge Index → Query Engine) разделяют построение индекса и обслуживание запросов; таксономия ([02-taxonomy] I–III) отделяет Knowledge Organization от Knowledge Retrieval и Knowledge Integration. Индексация — тяжёлый пакетный LLM-процесс ([07-implementation-methodology] §6: 281 мин на 1 млн токенов на CPU), запрос — интерактивный путь с требованиями отзывчивости (query-responsiveness) и изоляции агентских нагрузок (agent-traffic-isolation). Смешение путей в одном процессе создаёт риск конкуренции за ресурсы и деградации интерактивного пути.
-2. **Границы контейнеров следуют функциям F1–F4** (vision §2.1–2.2): F1 (проверяемые ответы) → Query Engine; F2 (индексация источников) → Оркестрация пайплайнов; F3 (контекст и влияние) → Ядро; F4 (MCP-канал) → MCP-сервер. Механизмы (онтологический слой, инкрементальное обновление, контур LLM) — компоненты внутри контейнеров, а не отдельные контейнеры (канон vision §2.2: механизмы не получают F-кодов; container.md: Agent Gateway — архитектурная граница внутри MCP-сервера).
+2. **Границы контейнеров следуют функциям F1–F4** (vision §2.1–2.2): F1 (проверяемые ответы) → Движок запросов; F2 (индексация источников) → Оркестрация пайплайнов; F3 (контекст и влияние) → Ядро; F4 (MCP-канал) → MCP-сервер. Механизмы (онтологический слой, инкрементальное обновление, контур LLM) — компоненты внутри контейнеров, а не отдельные контейнеры (канон vision §2.2: механизмы не получают F-кодов; container.md: Agent Gateway — архитектурная граница внутри MCP-сервера).
 3. **Каналы доступа разделяются по протоколу и классу нагрузки** (принято в [api-gateway-adoption](ADR-DES.API.api-gateway-adoption.md) и [agent-gateway-scheduling-layer](ADR-DES.API.agent-gateway-scheduling-layer.md)): люди — HTTP(S) через API Gateway; ИИ-агенты — MCP через MCP-сервер; внутренние сервисы не публикуются наружу напрямую.
 
 ## Решение
@@ -22,7 +22,7 @@ GraphRAG — корпоративная система знаний на баз�
 |---|---|---|---|
 | Ядро | Сервис | F3 | Граф знаний, ArtifactGraph, онтологический слой, компилятор контекста |
 | Оркестрация пайплайнов индексации | Воркер | F2 | GitLab/S3 sync и ingest, извлечение (RAPTOR/StructRAG для PDF), очередь задач, инкрементальное обновление, сборка и атомарная публикация версий, пересчёт и суммаризация сообществ |
-| Query Engine | Сервис | F1 | Retrieval (dual-level, PathRAG, PPR), генерация ответов, grounding/provenance, сверка «результат ↔ источник» |
+| Движок запросов | Сервис | F1 | Retrieval (dual-level, PathRAG, PPR), генерация ответов, grounding/provenance, сверка «результат ↔ источник» |
 | MCP-сервер | Сервис | F4 | Инструменты `answer`/`compile_context`, Agent Gateway (auth, политики, квоты, бюджет), слой планирования, фильтрация утечек, аудит обращений |
 | API Gateway | Сервис | сквозное | Единая HTTP-точка входа для людей: authN/authZ, TLS, маршрутизация, rate limiting, квоты, аудит |
 | Web-сервер (статика) | Статическая раздача | сквозное | Раздача SPA: hashed-ассеты (immutable-кэш), `index.html` (no-cache), SPA-fallback, сжатие |
@@ -33,7 +33,7 @@ GraphRAG — корпоративная система знаний на баз�
 
 **Принципы декомпозиции** (что и почему выделяется в контейнер):
 
-1. **Разделение write/read путей.** Оркестрация (F2) — единственный владелец записи при сборке версий; Query Engine и Ядро обслуживают только опубликованные версии ([incremental-update-snapshot-publish](ADR-IMPL.DATA.incremental-update-snapshot-publish.md)). Это изолирует тяжёлую LLM-индексацию от интерактивного пути (query-responsiveness, agent-traffic-isolation) и даёт независимое масштабирование.
+1. **Разделение write/read путей.** Оркестрация (F2) — единственный владелец записи при сборке версий; Движок запросов и Ядро обслуживают только опубликованные версии ([incremental-update-snapshot-publish](ADR-IMPL.DATA.incremental-update-snapshot-publish.md)). Это изолирует тяжёлую LLM-индексацию от интерактивного пути (query-responsiveness, agent-traffic-isolation) и даёт независимое масштабирование.
 2. **Функциональная граница F1–F4.** Каждый контейнер — владелец своей функции; границы контейнеров совпадают с границами функций, что даёт трассируемость «контейнер → функция → US/UC» и заменяемость компонентов по контрактным тестам ([hybrid-graphrag-composition](ADR-DES.API.hybrid-graphrag-composition.md)).
 3. **Канальная граница.** API Gateway + Web-сервер (HTTP, люди) и MCP-сервер (MCP, агенты) — раздельно ([api-gateway-adoption](ADR-DES.API.api-gateway-adoption.md), [agent-gateway-scheduling-layer](ADR-DES.API.agent-gateway-scheduling-layer.md)).
 4. **Технологическая граница.** Хранилище — отдельный `ContainerDb` (Neo4j CE, [graph-storage](ADR-IMPL.DATA.graph-storage.md)); UI — браузерный SPA (вне серверной Go-кодовой базы); Интеграции — нативный CPU-код через CGo ([go-single-language-adoption](ADR-IMPL.STACK.go-single-language-adoption.md), `RULES.md`).
@@ -45,7 +45,7 @@ GraphRAG — корпоративная система знаний на баз�
 |---|---|---|
 | Ядро | Граф знаний, онтологический слой (ontology-grounded KG), ArtifactGraph, компилятор контекста | [01-principles] §3.3 (KG); [02-taxonomy] §1.2 (Ontology-Grounded: OG-RAG); [03-algorithms] §3 (KAG: mutual indexing KG↔chunks, логические формы); [05-design-guide] §3.1 (Knowledge Index) |
 | Оркестрация | Chunking (600/100), LLM-extraction с self-reflection/gleaning, детекция сообществ (Leiden), суммаризации сообществ, инкрементальное обновление, PDF-обработка | [01-principles] §3.1–3.5; [03-algorithms] §2 (LightRAG incremental), §5 (RAPTOR), §10 (StructRAG); [05-design-guide] §3.1 (Ingest Pipeline); [07-implementation-methodology] §1–2 |
-| Query Engine | Dual-level retrieval, PathRAG (pruned paths), PPR (ассоциативные запросы), генерация с grounding/provenance, сверка | [03-algorithms] §2 (LightRAG dual-level), §12 (PathRAG), §4 (HippoRAG PPR); [05-design-guide] §3.1 (Query Engine: adaptive router, local/structural/global, response generator); [07-implementation-methodology] §4 (grounding rules) |
+| Движок запросов | Dual-level retrieval, PathRAG (pruned paths), PPR (ассоциативные запросы), генерация с grounding/provenance, сверка | [03-algorithms] §2 (LightRAG dual-level), §12 (PathRAG), §4 (HippoRAG PPR); [05-design-guide] §3.1 (Query Engine: adaptive router, local/structural/global, response generator); [07-implementation-methodology] §4 (grounding rules) |
 | MCP-сервер | Канал F4: `answer`/`compile_context`, Agent Gateway, слой планирования | [vision.md](../../specs/vision.md) §2.2 (граница F4); [agent-gateway-scheduling-layer](ADR-DES.API.agent-gateway-scheduling-layer.md); [04-implementations] §1, §3 (MCP-серверы: ApeRAG, code-graph-rag) |
 | API Gateway | Единый HTTP-вход, политики, аудит | [api-gateway-adoption](ADR-DES.API.api-gateway-adoption.md); [context.md](../../specs/c4/context.md) (персоны: команда, эксплуатация) |
 | Web-сервер | Раздача SPA, кэш-заголовки | [api-gateway-adoption](ADR-DES.API.api-gateway-adoption.md) §6 |
@@ -69,8 +69,8 @@ GraphRAG — корпоративная система знаний на баз�
 | Альтернатива | Описание | Причины отклонения |
 |---|---|---|
 | **Монолит (один Go-процесс)** | Весь pipeline (индексация + запрос + MCP + гейтвей) в одном сервисе | Смешение пакетной LLM-индексации и интерактивного пути: риск для query-responsiveness и agent-traffic-isolation; нет независимого масштабирования; замена методов ([hybrid-graphrag-composition](ADR-DES.API.hybrid-graphrag-composition.md)) требует передеплоя всего |
-| **Сервис на каждый метод** (микросервисы LightRAG/PathRAG/PPR/RAPTOR…) | Каждый алгоритм — отдельный контейнер | Методы — взаимозаменяемые компоненты внутри Query Engine/Оркестрации (заменяемость по контрактным тестам); N сервисов → операционная сложность без выгоды для MVP |
-| **Query Engine и Ядро в одном контейнере** | Retrieval и граф/онтология — один сервис | Разные потребители и жизненные циклы: MCP обращается к Ядру напрямую (UC-compile_context), минуя Query Engine; Query Engine — тонкий горячий путь, заменяемый по контракту; Ядро — владелец модели графа, онтологии и компилятора контекста |
+| **Сервис на каждый метод** (микросервисы LightRAG/PathRAG/PPR/RAPTOR…) | Каждый алгоритм — отдельный контейнер | Методы — взаимозаменяемые компоненты внутри Движка запросов/Оркестрации (заменяемость по контрактным тестам); N сервисов → операционная сложность без выгоды для MVP |
+| **Движок запросов и Ядро в одном контейнере** | Retrieval и граф/онтология — один сервис | Разные потребители и жизненные циклы: MCP обращается к Ядру напрямую (UC-compile_context), минуя Движок запросов; Движок запросов — тонкий горячий путь, заменяемый по контракту; Ядро — владелец модели графа, онтологии и компилятора контекста |
 | **Единая точка входа HTTP + MCP** | Один гейтвей для людей и агентов | Отклонено в [api-gateway-adoption](ADR-DES.API.api-gateway-adoption.md): разделение по протоколу и классу нагрузки; изоляция агентских нагрузок — [agent-gateway-scheduling-layer](ADR-DES.API.agent-gateway-scheduling-layer.md) |
 | **Agent Gateway/слой планирования — отдельный контейнер** | Отдельный сервис-оркестратор агентских запросов | Отложено: в MVP — компоненты MCP-сервера; критерий пересмотра — рост workflow (см. [agent-gateway-scheduling-layer](ADR-DES.API.agent-gateway-scheduling-layer.md)) |
 | **Статика в гейтвее (go:embed)** | SPA встроена в бинарник API Gateway | Отклонено в [api-gateway-adoption](ADR-DES.API.api-gateway-adoption.md): независимый жизненный цикл фронта, зрелое кэширование |
@@ -83,14 +83,14 @@ GraphRAG — корпоративная система знаний на баз�
 
 - Изоляция тяжёлой индексации от интерактивного пути: отзывчивость запросов (query-responsiveness), изоляция агентских нагрузок (agent-traffic-isolation), независимое масштабирование write/read путей.
 - Границы контейнеров = границы функций F1–F4: трассируемость «контейнер → функция → US/UC», понятная карта системы для команды.
-- Заменяемость компонентов по контрактным тестам ([hybrid-graphrag-composition](ADR-DES.API.hybrid-graphrag-composition.md)): методы (PathRAG, PPR, LightRAG-retrieval) — компоненты внутри Query Engine, обновляются без смены контрактов.
+- Заменяемость компонентов по контрактным тестам ([hybrid-graphrag-composition](ADR-DES.API.hybrid-graphrag-composition.md)): методы (PathRAG, PPR, LightRAG-retrieval) — компоненты внутри Движка запросов, обновляются без смены контрактов.
 - Единые сквозные политики (auth, аудит, квоты) в API Gateway и MCP-сервере; независимый деплой фронта (Web-сервер).
 - Согласованность с принятыми ADR (Go-only, Neo4j, S3, инкрементальные снапшоты, Agent Gateway, API Gateway) — без конфликтов границ.
 
 **Отрицательные и смягчение:**
 
 1. **Число контейнеров и межсервисные вызовы (10 контейнеров).** Смягчение: контейнеры — логические Go-процессы, форма развёртывания не зафиксирована; взаимодействия — внутренний API с контрактными тестами; в MVP контейнеры могут деплоиться на одном хосте.
-2. **Риск «тонкого» Ядра или «толстого» Query Engine.** Смягчение: правило владения функциями (Ядро — модель графа/онтология/компилятор контекста; Query Engine — retrieval/генерация/сверка), код-ревью, контрактные тесты.
+2. **Риск «тонкого» Ядра или «толстого» Движка запросов.** Смягчение: правило владения функциями (Ядро — модель графа/онтология/компилятор контекста; Движок запросов — retrieval/генерация/сверка), код-ревью, контрактные тесты.
 3. **Дублирование политик между API Gateway и MCP-сервером (Agent Gateway).** Смягчение: общие библиотеки политик (auth, аудит) в общем коде, границы контейнеров раздельны (принято в [api-gateway-adoption](ADR-DES.API.api-gateway-adoption.md)).
 4. **Оркестрация — единая точка записи.** Смягчение: очередь задач внутри контейнера; при росте объёмов пайплайны индексации масштабируются горизонтально (воркер).
 
