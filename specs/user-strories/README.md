@@ -23,8 +23,8 @@ US-<domain>.<subdomain>.<action>
 
 | Домен | Соотв. функция (vision.md) | Поддомены |
 |-------|---------------------------|-----------|
-| `US-answers.*` | F1. Проверяемые ответы по проекту | `grounding`, `implementation`, `synthesis` |
-| `US-knowledge.*` | F2. Актуальная база знаний | `sync`, `ingest`, `update`, `control` |
+| `US-answers.*` | F1. Проверяемые ответы по проекту | `grounding`, `synthesis` |
+| `US-knowledge.*` | F2. Актуальная база знаний | `sync`, `ingest` |
 | `US-trace.*` | F3. Связи артефактов и контекст для изменений | `dependencies`, `impact`, `context`, `check` |
 | `US-mcp.*` | F4. MCP — интерфейс для ИИ-агентов | `access`, `compile` |
 
@@ -33,12 +33,9 @@ US-<domain>.<subdomain>.<action>
 | Домен.Поддомен | Соотв. функция | Пользовательский результат | Пример | Приоритет |
 |---|---|---|---|---|
 | `answers.grounding` | F1.1 | Ответ на вопрос по спекам, коду и продукту со ссылками на артефакты и происхождением | `US-answers.grounding.cited-answer` | P0 |
-| `answers.implementation` | F1.2 | Найден код, реализующий функциональное требование или бизнес-правило | `US-answers.implementation.find-code` | P0 |
-| `answers.synthesis` | F1.3 | Целостная картина: ответ, связывающий факты из разных артефактов (глобальные и multi-hop вопросы) | `US-answers.synthesis.multi-hop` | P1 (база) / P2 (полный контур) |
+| `answers.synthesis` | F1.2 | Целостная картина: ответ, связывающий факты из разных артефактов (глобальные и multi-hop вопросы) | `US-answers.synthesis.multi-hop` | P1 (база) / P2 (полный контур) |
 | `knowledge.sync` | F2.1 | Изменения спек и кода в GitLab автоматически попадают в базу знаний | `US-knowledge.sync.gitlab-index` | P0 |
 | `knowledge.ingest` | F2.2 | PDF-книги и legacy-документы загружены и доступны в базе знаний | `US-knowledge.ingest.pdf` | P1 |
-| `knowledge.update` | F2.3 | Обновление пересчитывает только затронутые части графа (инкрементально) | `US-knowledge.update.incremental` | P1 |
-| `knowledge.control` | F2.4 | Администратор запускает обновление вручную и видит его статус | `US-knowledge.control.manual-run` | P1 |
 | `trace.dependencies` | F3.1 | Видна цепочка «требование → задача → код → релиз» | `US-trace.dependencies.chain` | P1 |
 | `trace.impact` | F3.2 | Изменение артефакта разворачивается в детерминированный список затронутого | `US-trace.impact.analyze` | P0 |
 | `trace.context` | F3.3 | Получен необходимый и достаточный контекст для генерации артефакта | `US-trace.context.generate` | P1 |
@@ -52,7 +49,6 @@ US-<domain>.<subdomain>.<action>
 - Смежные области разведены по границам:
   - `answers.*` — содержание ответа; `trace.context` — содержание контекста для человека; `mcp.compile` — доставка точного набора артефактов агенту через MCP (граница F4, `vision.md` §2.2).
   - `trace.check` — сверка результата (артефакта) с источником (Фаза 2, K5).
-  - `knowledge.update` — инкрементальный пересчёт затронутого; `knowledge.control` — запуск обновления и наблюдение за статусом.
 
 ## Формат описания
 
@@ -106,8 +102,8 @@ Feature: US-<domain>.<subdomain>.<action> <краткое название>
 
 ### 4. Приоритеты
 
-- **P0** — критические сценарии, без которых продукт не может быть выпущен: `answers.grounding`, `answers.implementation`, `knowledge.sync`, `trace.impact`, `mcp.compile`.
-- **P1** — важные сценарии, закрывающие ключевые потребности пользователей: `answers.synthesis` (базовая версия), `knowledge.ingest`, `knowledge.update`, `knowledge.control`, `trace.dependencies`, `trace.context`, `mcp.access`.
+- **P0** — критические сценарии, без которых продукт не может быть выпущен: `answers.grounding`, `knowledge.sync`, `trace.impact`, `mcp.compile`.
+- **P1** — важные сценарии, закрывающие ключевые потребности пользователей: `answers.synthesis` (базовая версия), `knowledge.ingest`, `trace.dependencies`, `trace.context`, `mcp.access`.
 - **P2** — желательные сценарии, улучшающие пользовательский опыт: `answers.synthesis` (полный контур), `trace.check`.
 
 ### 5. Связи
