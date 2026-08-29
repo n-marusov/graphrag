@@ -32,8 +32,8 @@ US-<domain>.<subdomain>.<action>
 
 | Домен.Поддомен | Соотв. функция | Пользовательский результат | Пример | Приоритет |
 |---|---|---|---|---|
-| `answers.grounding` | F1.1 | Ответ на вопрос по спекам, коду и продукту со ссылками на артефакты и происхождением | `US-answers.grounding.cited-answer` | P0 |
-| `answers.synthesis` | F1.2 | Целостная картина: ответ, связывающий факты из разных артефактов (глобальные и multi-hop вопросы) | `US-answers.synthesis.multi-hop` | P1 (база) / P2 (полный контур) |
+| `answers.grounding` | F1.1 | Ответ на конкретный вопрос по спекам, коду и продукту со ссылками на артефакты и происхождением | `US-answers.grounding.cited-answer` | P0 |
+| `answers.synthesis` | F1.2 | Целостная картина: ответ на обзорный вопрос, связывающий факты из разных артефактов | `US-answers.synthesis.multi-hop` | P1 (база) / P2 (полный контур) |
 | `knowledge.sync` | F2.1 | Изменения спек и кода в GitLab автоматически попадают в базу знаний | `US-knowledge.sync.gitlab-index` | P0 |
 | `knowledge.ingest` | F2.2 | PDF-книги и legacy-документы загружены и доступны в базе знаний | `US-knowledge.ingest.pdf` | P1 |
 | `trace.impact` | F3.1 | Изменение артефакта разворачивается в детерминированный список связанных артефактов, требующих изменений | `US-trace.impact.analyze` | P0 |
