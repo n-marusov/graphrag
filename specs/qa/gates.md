@@ -197,9 +197,9 @@ G1 ловит нарушения формы (структура, ID, ссылк�
 | `glossary.md` | FMT, LINK, GLOSS, DUP, TBD | DEF, CONSIST | OWNER |
 | `use-cases/` (планируется) | FMT, ID, LINK, TRACE, DUP, TBD, C4 (диаграммы) | CONSIST, REVIEW | OWNER, ARCH |
 | `fun-req/` (планируется) | FMT, ID, LINK, TRACE, PRIO, METRIC, DUP, TBD | CONSIST, QMATRIX, FF, QA | OWNER |
-| `nonfun-req/` (планируется) | FMT, ID, LINK, TRACE, METRIC, DUP, TBD | CONSIST, QMATRIX, FF, SEC | OWNER, ARCH |
+| `nonfun-req/` | FMT, ID, LINK, TRACE, METRIC, DUP, TBD | CONSIST, QMATRIX, FF, SEC | OWNER, ARCH |
 | `user-strories/` (планируется) | FMT, ID, LINK, TRACE, PRIO, GHERKIN, DUP, TBD | CONSIST, QA, REVIEW | OWNER |
-| `business-rules/` (планируется) | FMT, ID, LINK, DUP, TBD | CONSIST, DEF | OWNER |
+| `business-rules/` | FMT, ID, LINK, DUP, TBD | CONSIST, DEF | OWNER |
 | `c4/` (планируется) | FMT, LINK, C4, DUP, TBD | CONSIST, REVIEW | ARCH |
 | `adr/` | FMT, ID, LINK, TBD | CONSIST, REVIEW | ARCH |
 | `domain/` (планируется) | FMT, LINK, MACHINE, DUP, TBD | DEF, CONSIST | ARCH, OWNER |
