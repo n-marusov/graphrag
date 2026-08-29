@@ -108,15 +108,17 @@ BR-<тип>.<семантический-тег>
 
 ## Текущее состояние
 
-На 2026-08-29 в каталоге **3 правила** — 3 файла `BR-<тип>.<семантический-тег>.md` в этой директории:
+На 2026-08-30 в каталоге **5 правил** — 5 файлов `BR-<тип>.<семантический-тег>.md` в этой директории:
 
 | BR-ID | Тип | Приоритет | Описание |
 |-------|-----|-----------|----------|
 | [BR-constraint.web-app-browser-chat](BR-constraint.web-app-browser-chat.md) | constraint | High | Система реализуется как web-приложение: чат с экспертной системой через браузер |
 | [BR-constraint.backend-cli-queries](BR-constraint.backend-cli-queries.md) | constraint | Medium | Бэкенд предоставляет CLI для запросов к системе знаний (в т.ч. тестирование); не для администрирования |
 | [BR-constraint.no-user-auth-in-mvp](BR-constraint.no-user-auth-in-mvp.md) | constraint | High | Авторизация и аудит действий пользователя отсутствуют в MVP преднамеренно; могут быть добавлены в будущем |
+| [BR-fact.gitlab-authoritative](BR-fact.gitlab-authoritative.md) | fact | High | GitLab (спеки и код) — эталонный источник корпуса; Confluence исключён; система знаний — индекс поверх источника правды |
+| [BR-constraint.source-load-minimal](BR-constraint.source-load-minimal.md) | constraint | High | Обслуживание запросов не создаёт нагрузку на authoritative-источники; чтение источников — при индексации и явных действиях пользователя |
 
-Покрытие типов: `fact` — 0, `constraint` — 3, `trigger` — 0, `inference` — 0. Сверка «типы правил → покрытие BR» — проверка полноты набора (W&B: collection completeness): политика предметной области, не зафиксированная правилом, — риск несогласованности производных артефактов.
+Покрытие типов: `fact` — 1, `constraint` — 4, `trigger` — 0, `inference` — 0. Сверка «типы правил → покрытие BR» — проверка полноты набора (W&B: collection completeness): политика предметной области, не зафиксированная правилом, — риск несогласованности производных артефактов.
 
 ### Кандидаты в правила (предлагаемые ID)
 
@@ -124,7 +126,6 @@ BR-<тип>.<семантический-тег>
 
 | BR-ID (кандидат) | Тип | Формулировка (кратко) | Источник |
 |------------------|-----|------------------------|----------|
-| `BR-fact.gitlab-authoritative` | fact | GitLab (спеки и код) — эталонный источник корпуса; Confluence исключён | vision.md §2.7 п.1,3 |
 | `BR-fact.changes-via-mr-and-store` | fact | Изменения корпуса приходят через MR (GitLab) и изменения во внешнем хранилище документов | vision.md §2.8 A8 |
 | `BR-constraint.single-definition` | constraint | Термины используют единые определения модели предметной области | G3; REQ-NFR-data.maintainability.ontology-model |
 | `BR-constraint.cited-answer` | constraint | Каждый ответ подтверждается ссылками на артефакты (grounding, provenance) | F1.1; §2.4 `QueryAnswered` |
