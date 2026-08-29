@@ -15,21 +15,19 @@ C4Container
         Person(ops, "Эксплуатация и безопасность", "Мониторинг, контур LLM, аудит")
         Person(agents, "ИИ-агенты разработки", "Программные пользователи: ответы и контекст через MCP")
 
-        System_Boundary(graphrag, "GraphRAG") {
-            Container(ui, "Веб-интерфейс (SPA)", "TS/JS (браузер)", "Вопросы, статусы, метрики, влияние")
-            Container(gateway, "API Gateway", "Go", "Auth, маршрутизация, квоты, аудит")
-            Container(web, "Web-сервер (статика)", "Go", "Раздача SPA, кэш")
-            Container(mcp, "MCP-сервер", "Go, MCP", "answer/compile, Agent Gateway")
-            Container(query, "Query Engine", "Go", "Retrieval, генерация, grounding")
-            Container(indexing, "Оркестрация индексации", "Go", "Sync, извлечение, снапшоты")
-            Container(core, "Ядро", "Go", "Граф знаний, онтология")
-            ContainerDb(graphstore, "Хранилище графа и векторов", "Neo4j CE", "Граф, чанки (текст), векторный индекс, снапшоты")
-            Container(integrations, "Интеграции", "Go (+CGo)", "Клиенты GitLab/S3/LLM, CPU")
-            Container(monitoring, "Мониторинг и аудит", "Go", "Логи, метрики, события безопасности")
-        }
-
         System_Ext(gitlab, "GitLab", "Спеки, код, MR, онтология")
         System_Ext(llm, "Контур LLM", "Open-weight, локальные GPU")
+
+        Container(ui, "Веб-интерфейс (SPA)", "TS/JS (браузер)", "Вопросы, статусы, метрики, влияние")
+        Container(gateway, "API Gateway", "Go", "Auth, маршрутизация, квоты, аудит")
+        Container(web, "Web-сервер (статика)", "Go", "Раздача SPA, кэш")
+        Container(mcp, "MCP-сервер", "Go, MCP", "answer/compile, Agent Gateway")
+        Container(query, "Query Engine", "Go", "Retrieval, генерация, grounding")
+        Container(indexing, "Оркестрация индексации", "Go", "Sync, извлечение, снапшоты")
+        Container(core, "Ядро", "Go", "Граф знаний, онтология")
+        ContainerDb(graphstore, "Хранилище графа и векторов", "Neo4j CE", "Граф, чанки (текст), векторный индекс, снапшоты")
+        Container(integrations, "Интеграции", "Go (+CGo)", "Клиенты GitLab/S3/LLM, CPU")
+        Container(monitoring, "Мониторинг и аудит", "Go", "Логи, метрики, события безопасности")
     }
 
     System_Ext(store, "Хранилище документов (S3)", "Книги и легаси")
@@ -43,7 +41,7 @@ C4Container
     Rel(gateway, query, "Запросы и ответы", "внутренний API")
     Rel(gateway, indexing, "Статусы индексации", "внутренний API")
     Rel(gateway, core, "Влияние, контекст", "внутренний API")
-    Rel(gateway, web, "Статика (/)", "внутренний API")
+    Rel(gateway, web, "Статика (/) ", "внутренний API")
     Rel(mcp, query, "UC-answer", "внутренний API")
     Rel(mcp, core, "UC-compile", "внутренний API")
     Rel(query, core, "Retrieval", "внутренний API")
@@ -58,7 +56,7 @@ C4Container
     Rel(mcp, monitoring, "SecurityEventEmitted", "логи")
     Rel(gateway, monitoring, "Аудит", "логи")
 
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="2", $c4ShapePadding="5")
+    UpdateLayoutConfig($c4ShapeInRow="5", $c4BoundaryInRow="1", $c4ShapePadding="5")
 ```
 
 ## Контекст — что моделируется
