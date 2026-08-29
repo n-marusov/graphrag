@@ -32,6 +32,7 @@
 | `component-web-server.md` | Component: компоненты Web-сервера (раздача статики, кэш, SPA-fallback) |
 | `component-ui.md` | Component: компоненты веб-интерфейса |
 | `component-integrations.md` | Component: компоненты интеграций (GitLab, контур LLM, CPU-компоненты) |
+| `component-monitoring.md` | Component: компоненты мониторинга и аудита (логи, метрики, события безопасности) |
 | `code-indexing-pipeline.md` | Code: автомат пайплайна индексации (DocumentIngested → GraphUpdated) |
 | `code-query-behavior.md` | Code: обработка запроса (QueryReceived → QueryAnswered) |
 | `deployment.md` | Deployment: топология развёртывания — контур организации, локальные GPU, GitLab, хранилище индекса |
@@ -59,6 +60,7 @@
 | `component-web-server.md` | Web-сервер (статика) | Раздача hashed-ассетов, кэш-заголовки, SPA-fallback |
 | `component-ui.md` | Веб-интерфейс | UI вопросов и ответов, статусы индексации, метрики, отчёты о влиянии изменений (F1, F3) |
 | `component-integrations.md` | Интеграции | GitLab-клиент, S3-клиент, клиент контура LLM, CPU-компоненты (Leiden, HNSW, токенизатор) |
+| `component-monitoring.md` | Мониторинг и аудит | Сбор логов и метрик, события безопасности (`SecurityEventEmitted`), панели аудита |
 
 > **Примечание:** перечень компонентов — плановый (целевая архитектура); файлы создаются и ссылки в таблице появляются по мере фиксации ADR уровня `IMPL` и появления реализации в `src/`.
 
