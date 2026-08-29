@@ -4,7 +4,7 @@
 
 Методологическая основа: Software Requirements Engineering (Wiegers & Beatty, 3rd ed.) — трёхуровневая модель требований (business → user → functional/nonfunctional) и цикл разработки требований (Elicitation → Analysis → Specification → Validation). NFR покрывают два класса из таксономии W&B: **атрибуты качества** (измеримые свойства: безопасность, производительность, точность) и **ограничения** (на выбор разработчика: стек, хранилище, контур LLM).
 
-> **Статус:** проект находится на этапе видения (Фаза 0), `src/` не содержит реализации; каталог вводится с нуля. На 2026-08-29 в каталоге **6 NFR** — сквозные требования перенесены из `vision.md` §2.5 для устранения дублирования; кандидаты на новые области — в разделе «Текущее состояние».
+> **Статус:** проект находится на этапе видения (Фаза 0), `src/` не содержит реализации; каталог вводится с нуля. На 2026-08-29 в каталоге **11 NFR** — сквозные требования перенесены из `vision.md` §2.5 для устранения дублирования; NFR отзывчивости/актуальности индекса и агентского контура добавлены по итогам фиксации ADR (инкрементальное обновление со снапшотами, agent gateway); кандидаты на новые области — в разделе «Текущее состояние».
 
 ## Иерархия требований
 
@@ -78,6 +78,11 @@ REQ-NFR-<area>.<qualifier>.<attribute>
 | [REQ-NFR-process.compliance.human-confirmation](REQ-NFR-process.compliance.human-confirmation.md) | P1 | Принцип «агент готовит — человек подтверждает и отвечает» |
 | [REQ-NFR-data.maintainability.ontology-model](REQ-NFR-data.maintainability.ontology-model.md) | P1 | Модель предметной области (онтологический слой) |
 | [REQ-NFR-process.maintainability.adoption-principles](REQ-NFR-process.maintainability.adoption-principles.md) | P2 | Принципы внедрения: метрики пользы, внедрение малыми шагами |
+| [REQ-NFR-data.performance.index-freshness](REQ-NFR-data.performance.index-freshness.md) | P0 | Актуальность индекса при изменении источников (инкрементальное обновление, G2) |
+| [REQ-NFR-api.performance.query-responsiveness](REQ-NFR-api.performance.query-responsiveness.md) | P0 | Отзывчивость запросов при фоновой переиндексации (G1) |
+| [REQ-NFR-data.maintainability.versioned-provenance](REQ-NFR-data.maintainability.versioned-provenance.md) | P1 | Версионированная трассируемость ответов и контекста (provenance, атомарная публикация) |
+| [REQ-NFR-api.performance.agent-traffic-isolation](REQ-NFR-api.performance.agent-traffic-isolation.md) | P1 | Изоляция агентских нагрузок от интерактивных запросов (квоты, приоритеты) |
+| [REQ-NFR-api.observability.agent-audit](REQ-NFR-api.observability.agent-audit.md) | P1 | Аудит и трассируемость действий ИИ-агентов (trace-id, бюджет, аудит-след) |
 
 Кандидаты на новые области (атрибуты из открытых вопросов, целевые значения — TBD):
 
@@ -88,22 +93,22 @@ REQ-NFR-<area>.<qualifier>.<attribute>
 
 ## Текущее состояние
 
-На 2026-08-29 в каталоге **6 NFR** — 6 файлов `REQ-NFR-<area>.<qualifier>.<attribute>.md` в этой директории, перенесены из `vision.md` §2.5 (сквозные требования MVP) для устранения дублирования:
+На 2026-08-29 в каталоге **11 NFR** — 11 файлов `REQ-NFR-<area>.<qualifier>.<attribute>.md` в этой директории: 6 перенесены из `vision.md` §2.5 (сквозные требования MVP) для устранения дублирования; 5 добавлены по итогам фиксации ADR (инкрементальное обновление со снапшотами и атомарной публикацией — `ADR-IMPL.DATA.incremental-update-snapshot-publish`; agent gateway и слой планирования — `ADR-DES.API.agent-gateway-scheduling-layer`):
 
 | Приоритет | Кол-во |
 |-----------|--------|
-| P0 | 2 |
-| P1 | 3 |
+| P0 | 4 |
+| P1 | 6 |
 | P2 | 1 |
 
 Покрытие областей (кол-во NFR на область):
 
 | Область | NFR | Область | NFR |
 |---------|-----|---------|-----|
-| `security` | 1 | `process` | 2 |
-| `api` | 2 | `data` | 1 |
+| `api` | 5 | `security` | 1 |
+| `data` | 3 | `process` | 2 |
 
-Квалификаторы: используется `compliance` (3), `performance` (1) и `maintainability` (2); `availability`, `observability` — допустимые, NFR по ним — кандидаты (см. «Примеры NFR»). Области `infra`, `ui`, `ops`, `integration`, `doc` — в перечне, NFR по ним в работе. Сверка «атрибуты качества → покрытие NFR» — проверка полноты набора (W&B: collection completeness; непокрытый атрибут качества — риск для продукта).
+Квалификаторы: используется `performance` (3), `compliance` (3), `maintainability` (3) и `observability` (1); `availability` — допустимый, NFR по нему — кандидат (см. «Примеры NFR»). Области `infra`, `ui`, `ops`, `integration`, `doc` — в перечне, NFR по ним в работе. Сверка «атрибуты качества → покрытие NFR» — проверка полноты набора (W&B: collection completeness; непокрытый атрибут качества — риск для продукта).
 
 > **TBD по целевым значениям.** Часть критериев приёмки содержит целевые значения, определяемые по итогам замера исходного уровня (vision.md §1.4: сроки закрытия TBD — после замера, Фаза 1.5) — помечены `TBD` в файлах NFR; реестр открытых вопросов — [open-questions.md](../open-questions.md) (Q2.2 — критерии приёмки функций).
 
