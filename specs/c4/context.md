@@ -19,32 +19,32 @@ C4Context
     title Системный контекст: GraphRAG
 
     Enterprise_Boundary(org, "Организация", "boundary") {
-        Person(team, "Команда разработки", "Вопросы по продукту, спекам и коду; контекст генерации; анализ влияния; трассировка")
-        Person(ops, "Эксплуатация и безопасность", "Управление контуром LLM; мониторинг актуальности; аудит обращений")
+        Person(team, "Команда разработки", "Вопросы, контекст, влияние")
+        Person(ops, "Эксплуатация и безопасность", "Мониторинг, контур LLM, аудит")
 
         Boundary(devContour, "Контур разработки", "boundary") {
-            System(graphRag, "GraphRAG", "Индекс корпуса в граф знаний, онтологический слой, ответы со ссылками, анализ влияния, компилятор контекста")
-            System_Ext(agents, "ИИ-агенты автоматизации разработки", "Программные пользователи: ответы и контекст через MCP")
+            System(graphRag, "GraphRAG", "Граф знаний, ответы со ссылками, влияние, контекст")
+            System_Ext(agents, "ИИ-агенты разработки", "Ответы и контекст через MCP")
         }
 
-        System_Ext(gitlab, "GitLab", "Эталонный источник: спеки, код, MR, владельцы артефактов; репозиторий модели предметной области (онтология)")
-        System_Ext(store, "Внешнее хранилище документов", "Книги и унаследованные документы (глобальный контекст)")
-        System_Ext(gpu, "Контур LLM", "Open-weight модели на локальных GPU в защищённом контуре")
-        System_Ext(monitoring, "Мониторинг и аудит", "Фиксация событий безопасности контура LLM")
+        System_Ext(gitlab, "GitLab", "Спеки, код, MR, онтология")
+        System_Ext(store, "Хранилище документов (S3)", "Книги и легаси")
+        System_Ext(gpu, "Контур LLM", "Open-weight, локальные GPU")
+        System_Ext(monitoring, "Мониторинг и аудит", "Логи, панели")
     }
 
-    Rel(team, graphRag, "Вопросы, контекст, анализ влияния", "API / UI")
-    Rel(team, gitlab, "Создание и изменение артефактов (спеки, код, архитектура, модель)", "MR / Git")
-    Rel(ops, graphRag, "Мониторинг, управление контуром", "API")
-    Rel(ops, monitoring, "Аудит обращений", "панели")
-    Rel(agents, graphRag, "Ответы, контекст, сверка", "MCP")
+    Rel(team, graphRag, "Вопросы, контекст, влияние", "API / UI")
+    Rel(team, gitlab, "Создание артефактов", "MR / Git")
+    Rel(ops, graphRag, "Мониторинг, управление", "API")
+    Rel(ops, monitoring, "Аудит", "панели")
+    Rel(agents, graphRag, "Ответы, контекст", "MCP")
 
-    BiRel(graphRag, gitlab, "Индексация спек и кода", "Git API / MR / webhook")
-    Rel(store, graphRag, "Индексация книг и легаси", "API / события / сверка")
-    BiRel(graphRag, gpu, "Извлечение, генерация, оценка", "Local")
+    BiRel(graphRag, gitlab, "Индексация спек и кода", "Git API / MR")
+    Rel(store, graphRag, "Индексация книг", "API / события")
+    BiRel(graphRag, gpu, "Извлечение, генерация", "Local")
     Rel(graphRag, monitoring, "События безопасности", "Логи / панели")
 
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1", $c4ShapePadding="5")
 ```
 
 ## Контекст — что моделируется
