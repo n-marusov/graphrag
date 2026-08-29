@@ -61,5 +61,5 @@
 **Открытые вопросы (вне этого ADR):**
 
 - Конкретный S3-провайдер/бакеты, политики доступа и событий — операционный выбор, вне ADR.
-- Хранилище графа и векторного индекса — `ADR-IMPL.DATA.graph-storage` (открытый вопрос).
+- Хранилище графа и векторного индекса — решение: Neo4j (self-hosted, Community Edition), см. [ADR-IMPL.DATA.graph-storage](ADR-IMPL.DATA.graph-storage.md).
 - Модель обновления: инкрементальная + периодическая перестройка — кандидат `ADR-IMPL.DATA.incremental-update-model`.

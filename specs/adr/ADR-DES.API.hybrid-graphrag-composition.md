@@ -79,7 +79,7 @@ GraphRAG — корпоративная система знаний: индек�
 **Открытые вопросы (вне этого ADR):**
 
 - Конкретные Go-реализации компонентов и библиотеки — фиксируются ADR уровня `IMPL`.
-- Хранилище графа и векторного индекса — `ADR-IMPL.DATA.graph-storage` (открытый вопрос).
+- Хранилище графа и векторного индекса — решение: Neo4j (self-hosted, Community Edition), см. [ADR-IMPL.DATA.graph-storage](ADR-IMPL.DATA.graph-storage.md).
 - Модель обновления: инкрементальная + периодическая перестройка — кандидат `ADR-IMPL.DATA.incremental-update-model`.
 - Масштаб корпуса (1k vs 100k документов) — открытый вопрос RESEARCH.md.
 - Real-time контур (Graphiti) — Фаза 3, вне MVP.
