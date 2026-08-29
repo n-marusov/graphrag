@@ -28,6 +28,8 @@
 | `component-indexing.md` | Component: компоненты оркестрации пайплайнов индексации |
 | `component-query.md` | Component: компоненты query engine |
 | `component-mcp.md` | Component: компоненты MCP-сервера |
+| `component-api-gateway.md` | Component: компоненты API Gateway (маршрутизация, политики, аудит) |
+| `component-web-server.md` | Component: компоненты Web-сервера (раздача статики, кэш, SPA-fallback) |
 | `component-ui.md` | Component: компоненты веб-интерфейса |
 | `component-integrations.md` | Component: компоненты интеграций (GitLab, контур LLM, CPU-компоненты) |
 | `code-indexing-pipeline.md` | Code: автомат пайплайна индексации (DocumentIngested → GraphUpdated) |
@@ -53,6 +55,8 @@
 | `component-indexing.md` | Оркестрация пайплайнов индексации | GitLab sync/ingest, S3 ingest, извлечение сущностей/связей/утверждений, инкрементальное обновление графа, пересчёт сообществ (F2) |
 | `component-query.md` | Query engine | Извлечение контекста (dual-level retrieval, PathRAG, PPR), генерация ответов, grounding/provenance, сверка «результат ↔ источник» (F1) |
 | `component-mcp.md` | MCP-сервер | MCP-сервер и инструменты, компиляция контекста для агентов, доставка ответов (F4) |
+| `component-api-gateway.md` | API Gateway | Маршрутизация, политики (authN/authZ, rate limiting, квоты), аудит, TLS |
+| `component-web-server.md` | Web-сервер (статика) | Раздача hashed-ассетов, кэш-заголовки, SPA-fallback |
 | `component-ui.md` | Веб-интерфейс | UI вопросов и ответов, статусы индексации, метрики, отчёты о влиянии изменений (F1, F3) |
 | `component-integrations.md` | Интеграции | GitLab-клиент, S3-клиент, клиент контура LLM, CPU-компоненты (Leiden, HNSW, токенизатор) |
 
@@ -69,7 +73,8 @@
 
 **Ключевые связи между компонентами (целевая архитектура):**
 
-- Команда обращается к GraphRAG через веб-интерфейс (API); ИИ-агенты автоматизации разработки — через MCP (`component-mcp.md`).
+- Команда обращается к GraphRAG через веб-интерфейс (SPA в браузере) и API Gateway; ИИ-агенты автоматизации разработки — через MCP (`component-mcp.md`).
+- API Gateway — единый origin: маршрутизирует `/` (раздача SPA, Web-сервер статики) и `/api/*` (внутренние сервисы); агенты — через MCP-сервер.
 - Query engine читает граф знаний и векторный индекс ядра; генерация и извлечение исполняются в контуре LLM (внешняя система, чёрный ящик).
 - Оркестрация пайплайнов индексации получает изменения из GitLab (Git API / MR / webhook) и внешнего хранилища документов (S3); актуализация базы знаний (F2) — детерминированная задача и не исполняется через MCP (граница F4, `vision.md` §2.2).
 - Внутри ядра компоненты связаны через граф зависимостей артефактов; онтологический слой — механизм внутри F1/F3.
