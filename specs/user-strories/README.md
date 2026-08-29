@@ -23,10 +23,10 @@ US-<domain>.<subdomain>.<action>
 
 | Домен | Соотв. функция (vision.md) | Поддомены |
 |-------|---------------------------|-----------|
-| `US-answers.*` | F1. Проверяемые ответы по проекту | `grounding`, `synthesis` |
-| `US-knowledge.*` | F2. Актуальная база знаний | `sync`, `ingest` |
-| `US-trace.*` | F3. Связи артефактов и контекст для изменений | `dependencies`, `impact`, `context`, `check` |
-| `US-mcp.*` | F4. MCP — интерфейс для ИИ-агентов | `access`, `compile` |
+| `US-answers.*` | F1. Генерация проверяемых ответов | `grounding`, `synthesis` |
+| `US-knowledge.*` | F2. Индексация источников знаний | `sync`, `ingest` |
+| `US-trace.*` | F3. Вычисление влияния и компиляция контекста | `impact`, `context`, `check` |
+| `US-mcp.*` | F4. Доставка ответов и контекста через MCP | `access`, `compile` |
 
 ### Матрица поддоменов
 
@@ -36,9 +36,8 @@ US-<domain>.<subdomain>.<action>
 | `answers.synthesis` | F1.2 | Целостная картина: ответ, связывающий факты из разных артефактов (глобальные и multi-hop вопросы) | `US-answers.synthesis.multi-hop` | P1 (база) / P2 (полный контур) |
 | `knowledge.sync` | F2.1 | Изменения спек и кода в GitLab автоматически попадают в базу знаний | `US-knowledge.sync.gitlab-index` | P0 |
 | `knowledge.ingest` | F2.2 | PDF-книги и legacy-документы загружены и доступны в базе знаний | `US-knowledge.ingest.pdf` | P1 |
-| `trace.dependencies` | F3.1 | Видна цепочка «требование → задача → код → релиз» | `US-trace.dependencies.chain` | P1 |
-| `trace.impact` | F3.2 | Изменение артефакта разворачивается в детерминированный список затронутого | `US-trace.impact.analyze` | P0 |
-| `trace.context` | F3.3 | Получен необходимый и достаточный контекст для генерации артефакта | `US-trace.context.generate` | P1 |
+| `trace.impact` | F3.1 | Изменение артефакта разворачивается в детерминированный список связанных артефактов, требующих изменений | `US-trace.impact.analyze` | P0 |
+| `trace.context` | F3.2 | Скомпилирован контекст (JSON-объект: набор связанных артефактов с направлениями связей) для генерации артефакта | `US-trace.context.generate` | P1 |
 | `trace.check` | Фаза 2 (K5) | Сгенерированный или изменённый артефакт сверен с источником | `US-trace.check.result-source` | P2 |
 | `mcp.access` | F4 | ИИ-агент подключается к GraphRAG через MCP: сервер, инструменты, аутентификация | `US-mcp.access.connect` | P1 |
 | `mcp.compile` | F4 | Агент получает точный набор артефактов и фактов под задачу вместо сырого текста | `US-mcp.compile.context` | P0 |
@@ -103,7 +102,7 @@ Feature: US-<domain>.<subdomain>.<action> <краткое название>
 ### 4. Приоритеты
 
 - **P0** — критические сценарии, без которых продукт не может быть выпущен: `answers.grounding`, `knowledge.sync`, `trace.impact`, `mcp.compile`.
-- **P1** — важные сценарии, закрывающие ключевые потребности пользователей: `answers.synthesis` (базовая версия), `knowledge.ingest`, `trace.dependencies`, `trace.context`, `mcp.access`.
+- **P1** — важные сценарии, закрывающие ключевые потребности пользователей: `answers.synthesis` (базовая версия), `knowledge.ingest`, `trace.context`, `mcp.access`.
 - **P2** — желательные сценарии, улучшающие пользовательский опыт: `answers.synthesis` (полный контур), `trace.check`.
 
 ### 5. Связи
