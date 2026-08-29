@@ -17,6 +17,7 @@ sequenceDiagram
     participant Agent as ИИ-агенты разработки
     participant MCP as MCP-сервер
     participant Core as Ядро
+    participant Store as Хранилище графа и векторов
     participant LLM as Контур LLM
     participant Audit as Мониторинг и аудит
 
@@ -37,6 +38,8 @@ sequenceDiagram
 
     %% --- 3. Исполнение включённого UC ---
     MCP->>Core: Исполнение включённого UC (компиляция / ответ)
+    Core->>Store: Чтение опубликованной версии (артефакты, факты, граф)
+    Store-->>Core: Набор артефактов и фактов с grounding
     Core->>LLM: Генерация и синтез (в контуре LLM)
 
     opt A3 Промпт-инъекция через содержимое корпуса
@@ -59,7 +62,7 @@ sequenceDiagram
 **Основной поток:**
 1. ИИ-агенты разработки подключаются к MCP-серверу (handshake, аутентификация).
 2. ИИ-агенты разработки вызывают инструмент (`compile_context` / `answer`) с параметрами задачи.
-3. MCP-сервер исполняет включённый UC — компиляцию контекста (`UC-context.build.generate`) или ответ с grounding (`UC-answers.grounding.cited-answer`).
+3. MCP-сервер исполняет включённый UC — компиляцию контекста (`UC-context.build.generate`) или ответ с grounding (`UC-answers.grounding.cited-answer`); Ядро читает артефакты и факты из хранилища графа и векторов.
 4. Результат сериализуется в структурированный ответ: точный набор артефактов, направления связей, факты с grounding.
 5. Выполняются фильтрация утечек и аудит обращения (`SecurityEventEmitted`).
 6. Ответ возвращается ИИ-агентам разработки → `ContextCompiled` / `QueryAnswered`.
