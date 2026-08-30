@@ -1,6 +1,6 @@
 # Архитектура GraphRAG — краткий обзор (контекст для ИИ-агентов)
 
-> **Статус:** этап видения (Фаза 0). Кодовой базы нет (`src/` — только README); архитектура описывает **целевое состояние** (`target`/`to be`). Источники истины: `specs/c4/*` (C4-диаграммы), `specs/adr/*` (10 принятых ADR), `specs/vision.md` (канон функций F1–F4), `specs/glossary.md` (единый язык). После появления кода диаграммы актуализируются до `as-is` (код — источник истины).
+> **Статус:** этап видения (Фаза 0). Кодовой базы нет (`src/` — только README); архитектура описывает **целевое состояние** (`target`/`to be`). Источники истины: `specs/c4/*` (C4-диаграммы), `specs/adr/*` (11 принятых ADR), `specs/vision.md` (канон функций F1–F4), `specs/glossary.md` (единый язык). После появления кода диаграммы актуализируются до `as-is` (код — источник истины).
 
 ## Что это за система
 
@@ -17,7 +17,7 @@
 
 | Решение | Суть |
 |---|---|
-| Язык | **Go** — единый язык серверной кодовой базы (без Rust/Python); нативный CPU-код (Leiden, HNSW, токенизатор) — через CGo при измеримом критерии. Фронтенд — **TypeScript** (тонкий SPA на Vue 3 + Vite, вне серверной кодовой базы) |
+| Язык | **Go** — единый язык серверной кодовой базы (без Rust/Python); нативный CPU-код (Leiden, HNSW, токенизатор) — через CGo при измеримом критерии. Фронтенд — **TypeScript** (тонкий SPA на Vue 3 + Vite, вне серверной кодовой базы; стилизация — Tailwind CSS v4, `ADR-DES.UI.tailwind-css-adoption`) |
 | Тип GraphRAG | Гибридная ontology-grounded композиция: LightRAG (ядро retrieval, dual-level, инкрементальность) + KAG-принципы (mutual indexing, grounding) + PathRAG (компактный контекст, без map-reduce) + PPR (ассоциативные запросы без LLM) + RAPTOR/StructRAG (PDF) + community summaries (C0–C1) |
 | Хранилище | Neo4j (self-hosted, Community Edition): граф + чанки (текст) + нативный векторный индекс (HNSW) + версионные снапшоты в одном движке; отдельный инстанс на проект + отдельный инстанс глобального слоя; хранилище за интерфейсом |
 | Обновление | Инкрементальное обновление + версионные снапшоты + атомарная публикация: путь чтения обслуживает только опубликованную версию; write/read пути разделены |
@@ -96,7 +96,7 @@ flowchart LR
 ## Связанные артефакты
 
 - C4: [`specs/c4/context.md`](../specs/c4/context.md) (уровень 1), [`specs/c4/container.md`](../specs/c4/container.md) (уровень 2), [`specs/c4/README.md`](../specs/c4/README.md) (индекс, плановые уровни 3–4)
-- ADR: [`specs/adr/README.md`](../specs/adr/README.md) — реестр 10 принятых ADR и правила оформления
+- ADR: [`specs/adr/README.md`](../specs/adr/README.md) — реестр 11 принятых ADR и правила оформления
 - Канон: [`specs/vision.md`](../specs/vision.md) (F1–F4, MVP, roadmap, границы), [`specs/glossary.md`](../specs/glossary.md) (единый язык)
 - Правила: [`.ai-factory/RULES.md`](RULES.md), исследование: [`.ai-factory/RESEARCH.md`](RESEARCH.md)
 
