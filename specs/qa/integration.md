@@ -411,7 +411,7 @@ Artifacts: ci-job-<id>, logs/run-k1-<дата>.zip
 Прогнать security-gap сценарии из `qa/test-plan.md` и зафиксированные в ADR ограничения:
 
 - запросы к LLM идут только через корпоративный канал (локальный GPU-контур); 0 обращений вне контура (метрика REQ-NFR-security.compliance.llm-contour);
-- фильтрация утечек ПДн/чувствительных данных при обращении к LLM (REQ-NFR-security.compliance.llm-contour), требования 152-ФЗ;
+- фильтрация утечек ПДн/чувствительных данных при обращении к LLM (REQ-NFR-security.compliance.llm-contour; ПДн не обрабатываются системой — vision §2.7 п.12);
 - аудит обращений к LLM (SecurityEventEmitted) доставляется в ИБ с корректной подписью;
 - webhook без валидной подписи отклоняется, replay по `event_id` не проходит;
 - GitLab webhook/MR без валидной подписи отклоняется;
@@ -546,7 +546,7 @@ Negative/boundary:
 Проверять:
 
 - обращение к LLM только через корпоративный канал: локальный GPU-контур (Linux, NVIDIA, open-weight); доля обращений через корпоративный канал — 0 вне контура;
-- фильтрация утечек ПДн/чувствительных данных (REQ-NFR-security.compliance.llm-contour), требования 152-ФЗ;
+- фильтрация утечек ПДн/чувствительных данных (REQ-NFR-security.compliance.llm-contour; ПДн не обрабатываются системой — vision §2.7 п.12);
 - аудит обращений: `SecurityEventEmitted` доставляется в ИБ;
 - лицензии open-weight моделей и open-source зависимостей (SCA);
 - контроль затрат: минимизация токенов/LLM-вызовов (REQ-NFR-api.performance.token-minimization).

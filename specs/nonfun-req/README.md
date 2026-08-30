@@ -93,22 +93,22 @@ REQ-NFR-<area>.<qualifier>.<attribute>
 
 ## Текущее состояние
 
-На 2026-08-29 в каталоге **11 NFR** — 11 файлов `REQ-NFR-<area>.<qualifier>.<attribute>.md` в этой директории: 6 перенесены из `vision.md` §2.5 (сквозные требования MVP) для устранения дублирования; 5 добавлены по итогам фиксации ADR (инкрементальное обновление со снапшотами и атомарной публикацией — `ADR-IMPL.DATA.incremental-update-snapshot-publish`; agent gateway и слой планирования — `ADR-DES.API.agent-gateway-scheduling-layer`):
+На 2026-08-30 в каталоге **13 NFR** — 13 файлов `REQ-NFR-<area>.<qualifier>.<attribute>.md` в этой директории: 6 перенесены из `vision.md` §2.5 (сквозные требования MVP) для устранения дублирования; 5 добавлены по итогам фиксации ADR (инкрементальное обновление со снапшотами и атомарной публикацией — `ADR-IMPL.DATA.incremental-update-snapshot-publish`; agent gateway и слой планирования — `ADR-DES.API.agent-gateway-scheduling-layer`); 2 добавлены по итогам ответов на открытые вопросы 2026-08-30 (бюджет простоя/RPO/RTO — `REQ-NFR-api.availability.downtime-budget`; золотые сигналы наблюдаемости — `REQ-NFR-api.observability.golden-signals`):
 
 | Приоритет | Кол-во |
 |-----------|--------|
 | P0 | 4 |
-| P1 | 6 |
+| P1 | 8 |
 | P2 | 1 |
 
 Покрытие областей (кол-во NFR на область):
 
 | Область | NFR | Область | NFR |
 |---------|-----|---------|-----|
-| `api` | 5 | `security` | 1 |
+| `api` | 7 | `security` | 1 |
 | `data` | 3 | `process` | 2 |
 
-Квалификаторы: используется `performance` (3), `compliance` (3), `maintainability` (3) и `observability` (1); `availability` — допустимый, NFR по нему — кандидат (см. «Примеры NFR»). Области `infra`, `ui`, `ops`, `integration`, `doc` — в перечне, NFR по ним в работе. Сверка «атрибуты качества → покрытие NFR» — проверка полноты набора (W&B: collection completeness; непокрытый атрибут качества — риск для продукта).
+Квалификаторы: используется `performance` (3), `compliance` (3), `maintainability` (3), `observability` (2) и `availability` (1, добавлен 2026-08-30). Области `infra`, `ui`, `ops`, `integration`, `doc` — в перечне, NFR по ним в работе. Сверка «атрибуты качества → покрытие NFR» — проверка полноты набора (W&B: collection completeness; непокрытый атрибут качества — риск для продукта).
 
 > **TBD по целевым значениям.** Часть критериев приёмки содержит целевые значения, определяемые по итогам замера исходного уровня (vision.md §1.4: сроки закрытия TBD — после замера, Фаза 1.5) — помечены `TBD` в файлах NFR; реестр открытых вопросов — [open-questions.md](../open-questions.md) (Q2.2 — критерии приёмки функций).
 
@@ -174,7 +174,7 @@ REQ-NFR-<area>.<qualifier>.<attribute>
 - **Trade-offs атрибутов качества**: атрибуты могут конфликтовать (безопасность vs производительность, точность vs полнота контекста при минимуме токенов). Относительная важность фиксируется приоритетом NFR и решениями ADR; неразрешённый конфликт — дефект набора.
 - **Метрики-прокси, а не «отсутствие инцидентов»**: защищённость и качество измеряются проверяемыми показателями — точность ответов RAG ≥ 70% (`REQ-NFR-api.compliance.rag-accuracy`), доля обращений к LLM через корпоративный канал (G6), время от изменения источника до обновления индекса (G2), число противоречий (G3), полнота контекста при минимуме токенов (F3). Целевые значения уточняются после замера исходного уровня (`vision.md` §1.4).
 - **Сквозные требования §2.5**: `REQ-NFR-security.compliance.llm-contour`, `REQ-NFR-api.performance.token-minimization`, `REQ-NFR-api.compliance.rag-accuracy`, `REQ-NFR-process.compliance.human-confirmation`, `REQ-NFR-data.maintainability.ontology-model`, `REQ-NFR-process.maintainability.adoption-principles` — входят в MVP, не являются функциями и F-кодов не получают (канон нумерации функций, §2.2).
-- **Безопасность эшелонированно**: предотвращение → обнаружение → реагирование; контур LLM — фильтрация утечек и аудит обращений (событие `SecurityEventEmitted`, `vision.md` §2.4); данные разработки (код, спеки, ПДн) не покидают периметр (`REQ-NFR-security.compliance.llm-contour`).
+- **Безопасность эшелонированно**: предотвращение → обнаружение → реагирование; контур LLM — фильтрация утечек и аудит обращений (событие `SecurityEventEmitted`, `vision.md` §2.4); данные разработки (код, спеки) не покидают периметр; система не оператор ПДн (`vision.md` §2.7 п.12; `REQ-NFR-security.compliance.llm-contour`).
 
 ## Связанные артефакты
 

@@ -108,17 +108,19 @@ BR-<тип>.<семантический-тег>
 
 ## Текущее состояние
 
-На 2026-08-30 в каталоге **5 правил** — 5 файлов `BR-<тип>.<семантический-тег>.md` в этой директории:
+На 2026-08-30 в каталоге **7 файлов** `BR-<тип>.<семантический-тег>.md` (6 действующих правил + 1 заменённое, сохранённое исторически):
 
 | BR-ID | Тип | Приоритет | Описание |
 |-------|-----|-----------|----------|
-| [BR-constraint.web-app-browser-chat](BR-constraint.web-app-browser-chat.md) | constraint | High | Система реализуется как web-приложение: чат с экспертной системой через браузер |
+| [BR-constraint.web-app-browser-chat](BR-constraint.web-app-browser-chat.md) | constraint | High | Система реализуется как web-приложение: чат с экспертной системой через браузер (WCAG 2.1 AA, ru/en, evergreen-браузеры) |
 | [BR-constraint.backend-cli-queries](BR-constraint.backend-cli-queries.md) | constraint | Medium | Бэкенд предоставляет CLI для запросов к системе знаний (в т.ч. тестирование); не для администрирования |
-| [BR-constraint.no-user-auth-in-mvp](BR-constraint.no-user-auth-in-mvp.md) | constraint | High | Авторизация и аудит действий пользователя отсутствуют в MVP преднамеренно; могут быть добавлены в будущем |
+| [BR-constraint.sso-readonly-access](BR-constraint.sso-readonly-access.md) | constraint | High | Доступ людей — через корпоративный SSO (Keycloak); один пользователь по умолчанию; ролей нет; запросы только на чтение; агенты — по токену |
+| [BR-constraint.opensource-only](BR-constraint.opensource-only.md) | constraint | High | Только open-source компоненты и open-weight модели с допустимыми лицензиями; SCA-гейт, SBOM |
+| [BR-constraint.no-user-auth-in-mvp](BR-constraint.no-user-auth-in-mvp.md) | constraint (ЗАМЕНЕНО) | High | Авторизация и аудит действий пользователя отсутствуют в MVP — **заменено** на `BR-constraint.sso-readonly-access` (2026-08-30) |
 | [BR-fact.gitlab-authoritative](BR-fact.gitlab-authoritative.md) | fact | High | GitLab (спеки и код) — эталонный источник корпуса; Confluence исключён; система знаний — индекс поверх источника правды |
 | [BR-constraint.source-load-minimal](BR-constraint.source-load-minimal.md) | constraint | High | Обслуживание запросов не создаёт нагрузку на authoritative-источники; чтение источников — при индексации и явных действиях пользователя |
 
-Покрытие типов: `fact` — 1, `constraint` — 4, `trigger` — 0, `inference` — 0. Сверка «типы правил → покрытие BR» — проверка полноты набора (W&B: collection completeness): политика предметной области, не зафиксированная правилом, — риск несогласованности производных артефактов.
+Покрытие типов: `fact` — 1, `constraint` — 6 файлов (5 действующих + 1 заменённый, сохранён исторически), `trigger` — 0, `inference` — 0. Сверка «типы правил → покрытие BR» — проверка полноты набора (W&B: collection completeness): политика предметной области, не зафиксированная правилом, — риск несогласованности производных артефактов.
 
 ### Кандидаты в правила (предлагаемые ID)
 
@@ -132,7 +134,7 @@ BR-<тип>.<семантический-тег>
 | `BR-constraint.result-source-check` | constraint | Сгенерированный артефакт сверяется с источником до передачи дальше | G4; K5 |
 | `BR-inference.impact-computed` | inference | Изменение артефакта → детерминированный список затронутых | G4; F3.1 |
 | `BR-constraint.compiled-not-raw` | constraint | ИИ-агент получает скомпилированный контекст через MCP, а не сырой текст | F4; §2.8 A6 |
-| `BR-constraint.data-stays-in-perimeter` | constraint | Данные разработки (код, спеки, ПДн) не покидают периметр | REQ-NFR-security.compliance.llm-contour; §2.7 п.7,10 |
+| `BR-constraint.data-stays-in-perimeter` | constraint | Данные разработки (код, спеки) не покидают периметр; система не оператор ПДн (vision §2.7 п.12) | REQ-NFR-security.compliance.llm-contour; §2.7 п.7,10,12 |
 | `BR-constraint.llm-contour-only` | constraint | Обращения к LLM — только через корпоративный контур с фильтрацией утечек и аудитом | G6; §2.7 п.7 |
 | `BR-constraint.incremental-update` | constraint | Обновление графа знаний — инкрементальное, без полной перестройки на каждое изменение | G2; F2 |
 
@@ -151,7 +153,7 @@ BR-<тип>.<семантический-тег>
 
 Приоритет выражает значимость правила для бизнеса (W&B: prioritization по ценности, стоимости и риску). В отличие от FR/NFR (шкала P0–P2), правила каталога используют шкалу **High / Medium / Low** — приоритет указывает значимость ограничения, а не порядок реализации:
 
-- **High** — критичные политики и ограничения: нарушение ведёт к потере доверия к ответам, утечке данных или блокировке MVP (например, `BR-constraint.no-user-auth-in-mvp`, `BR-constraint.web-app-browser-chat`, `BR-constraint.data-stays-in-perimeter`, `BR-constraint.cited-answer`)
+- **High** — критичные политики и ограничения: нарушение ведёт к потере доверия к ответам, утечке данных или блокировке MVP (например, `BR-constraint.sso-readonly-access`, `BR-constraint.web-app-browser-chat`, `BR-constraint.data-stays-in-perimeter`, `BR-constraint.cited-answer`)
 - **Medium** — важные правила, обеспечивающие согласованность и предсказуемость (например, `BR-constraint.backend-cli-queries`, `BR-inference.impact-computed`, `BR-constraint.compiled-not-raw`)
 - **Low** — желательные политики, улучшающие эксплуатацию (например, политика ведения реестра синонимов терминов)
 
