@@ -20,7 +20,7 @@
 - **Артефакт** — единица спецификации с владельцем, схемой идентификаторов и шаблоном (определяется README каталога). Артефакт проходит стадии жизненного цикла (раздел 3).
 - **LLM-контур** — агенты AI Factory, которые генерируют, редактируют и проверяют артефакты. Гейты применяются **внутри** контура (shift-left) и **снаружи** (CI, ревью).
 - **Гейт** — проверка с измеримым результатом (`pass`/`fail`/`warn`), которая блокирует переход артефакта на следующую стадию. Гейт ≠ галочка: результат подтверждается артефактом проверки (отчёт, JSON, ревью-комментарий).
-- **Владелец артефакта** — роль, принимающая решения по артефакту (критерии приёмки, приоритеты, TBD) и утверждающая его.
+- **Владелец артефакта** — роль, принимающая решения по артефакту (критерии приёмки, приоритеты и отложенные вопросы) и утверждающая его.
 - **FR (функциональное требование)** — артефакт с критериями приёмки (`fun-req/`, планируется — vision.md §2.2), который после спецификации (`live`) переходит в реализацию: задача агенту → код → подтверждение тестами. Достижение FR подтверждается гейтами класса FG (раздел 6.4); FR без теста на критерии приёмки — «задекларировано», а не «реализовано».
 - **Архитектурные артефакты** — C4-модель (планируется; текущий архитектурный источник — `adr/` и `vision.md` §3.3) и архитектурные решения (`adr/`). Они задают ожидаемую структуру системы: расхождение реализации с диаграммой (изменённый/добавленный контракт, новый канал, отсутствующий компонент) — дефект, который ловят гейты класса AG (раздел 6.5) (`qa/README.md` §4.2).
 
@@ -129,7 +129,7 @@ G1 ловит нарушения формы (структура, ID, ссылк�
 | `G1-GLOSS` | Глоссарий | Доменные термины определены в `glossary.md`; новые термины заведены; нет «висячих» понятий | Все + glossary | LLM + скрипт (гибрид) |
 | `G1-C4` | Валидация C4-диаграмм | Mermaid-блоки (flowchart/C4/sequence) проходят синтаксический разбор `mermaid.parse`; синтаксис по конвенции (референс — `.ai-factory/references/mermaid-c4-diagrams.md`) | c4/, use-cases/, все `.md` с mermaid-блоками (specs/, src/) | ✅ Скрипт `tools/validate-mermaid.js` (npm `validate:mermaid`) + CI-джоба `validate-mermaid` в `.gitlab-ci.yml` (требуется активный GitLab runner) |
 | `G1-DUP` | Дубликаты | Уникальность ID в каталоге; отсутствие дублирующих требований (одинаковое описание/критерии) | FR, NFR, UC, US, BR | Скрипт по ID (план) |
-| `G1-TBD` | Реестр TBD | Каждый `[TBD-xx]` в артефакте заведён в `.ai-factory/RESEARCH.md` (Open questions) с владельцем, областью и сроком; закрытые TBD удалены из артефактов | Все | Скрипт-сверка (план) |
+| `G1-TBD` | Реестр отложенных вопросов | Каждый `[TBD-xx]` в артефакте заведён в `.ai-factory/RESEARCH.md` (Open questions) с владельцем, областью и сроком; закрытые отложенные вопросы удалены из артефактов | Все | Скрипт-сверка (план) |
 | `G1-MACHINE` | Машинная читаемость | JSON/OWL/RDF валидируются по схеме; `domain/` (DDD-модель, планируется — vision.md §2.2) согласована с текстовыми артефактами | domain/ (планируется), glossary | Скрипты (план) |
 
 ### 6.2. G2 — LLM-проверки (аудиты скиллами)
@@ -194,19 +194,19 @@ G1 ловит нарушения формы (структура, ID, ссылк�
 
 | Артефакт | G1 (обязательные) | G2 | G3 |
 |---|---|---|---|
-| `vision.md` | FMT, LINK, GLOSS, DUP, TBD | CONSIST, QMATRIX, REVIEW | OWNER, APPROVE |
-| `glossary.md` | FMT, LINK, GLOSS, DUP, TBD | DEF, CONSIST | OWNER |
-| `use-cases/` (планируется) | FMT, ID, LINK, TRACE, DUP, TBD, C4 (диаграммы) | CONSIST, REVIEW | OWNER, ARCH |
-| `fun-req/` (планируется) | FMT, ID, LINK, TRACE, PRIO, METRIC, DUP, TBD | CONSIST, QMATRIX, FF, QA | OWNER |
-| `nonfun-req/` | FMT, ID, LINK, TRACE, METRIC, DUP, TBD | CONSIST, QMATRIX, FF, SEC | OWNER, ARCH |
-| `user-strories/` (планируется) | FMT, ID, LINK, TRACE, PRIO, GHERKIN, DUP, TBD | CONSIST, QA, REVIEW | OWNER |
-| `business-rules/` | FMT, ID, LINK, DUP, TBD | CONSIST, DEF | OWNER |
-| `c4/` (планируется) | FMT, LINK, C4, DUP, TBD | CONSIST, REVIEW | ARCH |
-| `adr/` | FMT, ID, LINK, TBD | CONSIST, REVIEW | ARCH |
-| `domain/` (планируется) | FMT, LINK, MACHINE, DUP, TBD | DEF, CONSIST | ARCH, OWNER |
-| `qa/` | FMT, LINK, TBD | QMATRIX, FF, QA, SEC | QA, OWNER |
-| Планы/roadmap (`.ai-factory/`) | FMT, LINK, TBD | CONSIST, REVIEW | OWNER, APPROVE |
-| `references/` | FMT, LINK, TBD | CONSIST, REVIEW | Автор |
+| `vision.md` | FMT, LINK, GLOSS, DUP, G1-TBD | CONSIST, QMATRIX, REVIEW | OWNER, APPROVE |
+| `glossary.md` | FMT, LINK, GLOSS, DUP, G1-TBD | DEF, CONSIST | OWNER |
+| `use-cases/` (планируется) | FMT, ID, LINK, TRACE, DUP, G1-TBD, C4 (диаграммы) | CONSIST, REVIEW | OWNER, ARCH |
+| `fun-req/` (планируется) | FMT, ID, LINK, TRACE, PRIO, METRIC, DUP, G1-TBD | CONSIST, QMATRIX, FF, QA | OWNER |
+| `nonfun-req/` | FMT, ID, LINK, TRACE, METRIC, DUP, G1-TBD | CONSIST, QMATRIX, FF, SEC | OWNER, ARCH |
+| `user-strories/` (планируется) | FMT, ID, LINK, TRACE, PRIO, GHERKIN, DUP, G1-TBD | CONSIST, QA, REVIEW | OWNER |
+| `business-rules/` | FMT, ID, LINK, DUP, G1-TBD | CONSIST, DEF | OWNER |
+| `c4/` (планируется) | FMT, LINK, C4, DUP, G1-TBD | CONSIST, REVIEW | ARCH |
+| `adr/` | FMT, ID, LINK, G1-TBD | CONSIST, REVIEW | ARCH |
+| `domain/` (планируется) | FMT, LINK, MACHINE, DUP, G1-TBD | DEF, CONSIST | ARCH, OWNER |
+| `qa/` | FMT, LINK, G1-TBD | QMATRIX, FF, QA, SEC | QA, OWNER |
+| Планы/roadmap (`.ai-factory/`) | FMT, LINK, G1-TBD | CONSIST, REVIEW | OWNER, APPROVE |
+| `references/` | FMT, LINK, G1-TBD | CONSIST, REVIEW | Автор |
 | `src/` (код, реализация FR) | FG-BUILD, FG-UNIT, FG-TEST, FG-TRACE, FG-TEST-QUALITY, FG-MUTATION; AG-CYCLES, AG-LAYERS, AG-BOUNDARIES, AG-CONTRACTS (локально у агента) | FG-VERIFY, CONSIST, REVIEW | Владелец компонента, G3-ARCH, G3-APPROVE |
 
 Примечание: строка `src/` — код как результат реализации FR: вместо G1-гейтов формы применяются FG-гейты достижения и качества тестов (раздел 6.4) и AG-гейты архитектуры (раздел 6.5); повторный контроль в CI — README.md §8 (целевое состояние).
