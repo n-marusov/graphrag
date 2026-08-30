@@ -1,0 +1,12 @@
+{
+  "name": "graphrag",
+  "private": true,
+  "description": "Инструменты разработки для системы знаний GraphRAG (валидация mermaid-диаграмм).",
+  "scripts": {
+    "validate:mermaid": "node tools/validate-mermaid.js"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1",
+    "mermaid": "^11.17.2"
+  }
+}

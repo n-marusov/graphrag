@@ -1,0 +1,28 @@
+# CI для GraphRAG — этап видения (Фаза 0).
+#
+# В src/ нет реализации, поэтому пайплайн содержит один гейт:
+#   validate-mermaid — синтаксическая валидация всех mermaid-блоков в
+#   документации (гейт G1-C4, specs/qa/gates.md, тул tools/validate-mermaid.js).
+# По мере появления Go-кода добавляются FG/AG-гейты (FG-BUILD, FG-UNIT и др.).
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+stages:
+  - docs
+
+validate-mermaid:
+  stage: docs
+  image: node:22
+  interruptible: true
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+  script:
+    - npm ci
+    - npm run validate:mermaid
