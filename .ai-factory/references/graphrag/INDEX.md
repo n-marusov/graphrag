@@ -11,6 +11,9 @@
 | 5 | [05-design-guide.md](05-design-guide.md) | Рекомендации по проектированию экспертной системы на базе GraphRAG | Руководство |
 | 6 | [06-paper-index.md](06-paper-index.md) | Полный индекс источников: 97 arXiv-работ + не-arXiv источники + репозитории (со ссылками) | Справочник |
 | 7 | [07-implementation-methodology.md](07-implementation-methodology.md) | Методология и практика реализации из foundational paper: промпты, self-reflection/gleaning, grounding rules, оценка, статистика, параметры | Методологический |
+| 8 | [08-accuracy-benchmarks.md](08-accuracy-benchmarks.md) | Точность GraphRAG по классам запросов: сводка публичных бенчмарков, стратификация целей точности | Справочный |
+| 9 | [09-incremental-update-practice.md](09-incremental-update-practice.md) | Инкрементальное обновление индекса: практика, ориентиры производительности, подтверждение A7 | Справочный |
+| 10 | [10-token-budget-accuracy.md](10-token-budget-accuracy.md) | Баланс токен-бюджета и точности RAG: ориентиры, онтологический слой, метод измерения | Справочный |
 
 > **Источники:** Обзоры [pengboci/GraphRAG-Survey](https://github.com/pengboci/GraphRAG-Survey), [DEEP-PolyU/Awesome-GraphRAG](https://github.com/DEEP-PolyU/Awesome-GraphRAG), 97 arXiv-статей, foundational paper "From Local to Global" (Microsoft Research, 2024)
 > **Создано:** 2026-08-29
