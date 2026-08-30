@@ -5,7 +5,7 @@
 | **ID** | `BR-constraint.opensource-only` |
 | **Тип правила** | `constraint` (ограничение) |
 | **Приоритет** | High |
-| **Статус** | `proposed` |
+| **Статус** | `approved` |
 | **Источник** | Решение владельца продукта (2026-08-30: «Opensource. Добавь риски сам») |
 | **Связанные требования** | ADR-IMPL.DATA.graph-storage (Neo4j CE — GPLv3; драйвер Apache-2.0); REQ-NFR-security.compliance.llm-contour (SCA-контроль лицензий); qa/README.md §5.1 (SCA, SBOM); qa/smoke-testing.md (SM-B-07, SM-B-08) |
 | **Связанные BR** | BR-constraint.data-stays-in-perimeter (кандидат) |

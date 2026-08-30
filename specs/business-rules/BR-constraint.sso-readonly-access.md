@@ -5,7 +5,7 @@
 | **ID** | `BR-constraint.sso-readonly-access` |
 | **Тип правила** | `constraint` (ограничение) |
 | **Приоритет** | High |
-| **Статус** | `proposed` |
+| **Статус** | `approved` |
 | **Источник** | Решение владельца продукта (2026-08-30); замена `BR-constraint.no-user-auth-in-mvp` |
 | **Связанные требования** | REQ-NFR-security.compliance.llm-contour (фильтрация утечек, события безопасности контура действуют); ADR-DES.SECURITY.sso-keycloak; ADR-DES.API.api-gateway-adoption; vision.md §2.7 п.7 (LLM только в контролируемом контуре) |
 | **Связанные BR** | BR-constraint.no-user-auth-in-mvp (ЗАМЕНЕНО) |

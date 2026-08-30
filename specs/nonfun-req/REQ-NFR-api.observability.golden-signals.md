@@ -4,7 +4,7 @@
 |------|----------|
 | **ID** | `REQ-NFR-api.observability.golden-signals` |
 | **Приоритет** | P1 |
-| **Статус** | `proposed` |
+| **Статус** | `approved` |
 | **Источник** | Решение владельца продукта (2026-08-30): «В целом, не критично. Добавь стандартные не очень жёсткие метрики»; vision.md §3.1 (профиль «Администратор системы», «IT-безопасность» — панели аудита); §2.4 (`SecurityEventEmitted`) |
 | **Связанные функции** | F1–F4 (сквозное) |
 | **Связанные требования** | REQ-NFR-api.observability.agent-audit (аудит агентских шагов); REQ-NFR-api.performance.query-responsiveness; REQ-NFR-data.performance.index-freshness; ADR-DES.INFRA.container-composition (контейнер «Мониторинг и аудит») |

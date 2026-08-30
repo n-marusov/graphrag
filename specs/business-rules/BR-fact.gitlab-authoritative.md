@@ -5,7 +5,7 @@
 | **ID** | `BR-fact.gitlab-authoritative` |
 | **Тип правила** | `fact` (утверждение о предметной области) |
 | **Приоритет** | High |
-| **Статус** | `proposed` |
+| **Статус** | `approved` |
 | **Источник** | vision.md §2.7 п.1, п.3; §2.8 A1 |
 | **Связанные требования** | F1, F2 (индексация источников знаний); ADR-IMPL.INTEGRATION.s3-document-store; ADR-IMPL.DATA.graph-storage (п. 3 решения) |
 | **Связанные BR** | `BR-constraint.source-load-minimal` (производное ограничение); `BR-fact.changes-via-mr-and-store` (кандидат) |

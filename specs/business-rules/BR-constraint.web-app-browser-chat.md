@@ -5,7 +5,7 @@
 | **ID** | `BR-constraint.web-app-browser-chat` |
 | **Тип правила** | `constraint` (ограничение) |
 | **Приоритет** | High |
-| **Статус** | `proposed` |
+| **Статус** | `approved` |
 | **Источник** | Решение владельца продукта (2026-08-29) |
 | **Связанные требования** | F1 (генерация проверяемых ответов); F3 (контекст для разработки); UC-answers.grounding.cited-answer; REQ-NFR-api.compliance.rag-accuracy; REQ-NFR-process.compliance.human-confirmation; ADR-DES.UI.spa-typescript-frontend (TypeScript SPA) |
 | **Связанные BR** | — |

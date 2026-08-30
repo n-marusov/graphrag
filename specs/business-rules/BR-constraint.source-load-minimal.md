@@ -5,7 +5,7 @@
 | **ID** | `BR-constraint.source-load-minimal` |
 | **Тип правила** | `constraint` (ограничение) |
 | **Приоритет** | High |
-| **Статус** | `proposed` |
+| **Статус** | `approved` |
 | **Источник** | Решение владельца продукта (2026-08-30); vision §2.7 п.1, §2.8 A1 |
 | **Связанные требования** | REQ-NFR-api.performance.query-responsiveness; REQ-NFR-api.performance.agent-traffic-isolation; ADR-IMPL.DATA.graph-storage (п. 3 решения) |
 | **Связанные BR** | `BR-fact.gitlab-authoritative` |

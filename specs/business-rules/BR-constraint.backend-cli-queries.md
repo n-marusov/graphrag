@@ -5,7 +5,7 @@
 | **ID** | `BR-constraint.backend-cli-queries` |
 | **Тип правила** | `constraint` (ограничение) |
 | **Приоритет** | Medium |
-| **Статус** | `proposed` |
+| **Статус** | `approved` |
 | **Источник** | Решение владельца продукта (2026-08-29) |
 | **Связанные требования** | F1 (генерация проверяемых ответов); UC-answers.grounding.cited-answer; qa/ §7 (тестирование NFR, golden-наборы) |
 | **Связанные BR** | `BR-constraint.web-app-browser-chat` (дополняет канал доступа) |
