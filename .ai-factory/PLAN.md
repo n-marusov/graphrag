@@ -24,15 +24,15 @@ Constraints:
 
 Decisions:
 - Базовый язык реализации: Go.
-- CPU-heavy части: Rust только при необходимости.
+- CPU-компоненты (Leiden/HNSW/токенизатор): на Go, при необходимости через CGo к зрелым C-библиотекам (Rust исключён, решение 2026-08-30).
 - Тип GraphRAG: hybrid ontology-grounded подход на базе LightRAG + KAG-принципов + PathRAG, с RAPTOR/StructRAG для PDF и PPR для retrieval без LLM.
 - Онтологический слой: DDD-модель как машинно-читаемая онтология.
 - Роль продукта: evidence-based context layer / context compiler для AI Factory и Hand-off.
 
 Open questions:
-- Масштаб корпуса: 1k или 100k документов?
-- Какая GPU/модель будет целевой для MVP?
-- Какие MVP-волны нужны?
+- Масштаб корпуса: до ~10k документов (закрыт, решение 2026-08-30).
+- Целевое железо MVP: NVIDIA H200 (141 ГБ), 70B open-weight (Q4/FP8).
+- Какие MVP-волны нужны? (открыт)
 
 ## Commit Plan
 - **Commit 1** (after tasks 1-2): `docs: add GraphRAG glossary and vision structure`

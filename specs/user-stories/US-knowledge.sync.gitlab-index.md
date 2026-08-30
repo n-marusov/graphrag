@@ -3,7 +3,7 @@
 # US-knowledge.sync.gitlab-index — Автоиндексация изменений GitLab
 
 ```gherkin
-@US-knowledge.sync.gitlab-index @UC-knowledge.sync.gitlab-index @P0 @knowledge
+@US-knowledge.sync.gitlab-index @UC-knowledge.sync.gitlab-index @P0 @knowledge @accessibility
 Feature: US-knowledge.sync.gitlab-index Изменения спек и кода в GitLab автоматически попадают в базу знаний (F2.1)
 
   Background:
@@ -31,4 +31,10 @@ Feature: US-knowledge.sync.gitlab-index Изменения спек и кода 
     Given при извлечении произошёл сбой LLM-контура
     When система обрабатывает документ
     Then частичный успех изолируется: успешные документы фиксируются, сбойные — в очередь на повтор (backoff)
+
+  Scenario: Доступность статуса индексации для screen reader (a11y)
+    Given пользователь использует screen reader (NVDA / VoiceOver)
+    When статус индексации отображается в веб-интерфейсе
+    Then ключевые элементы и статусы имеют текстовые альтернативы (WCAG 2.1 AA)
+    And навигация достижима с клавиатуры (keyboard-only)
 ```

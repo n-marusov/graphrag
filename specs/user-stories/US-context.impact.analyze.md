@@ -3,7 +3,7 @@
 # US-context.impact.analyze — Анализ влияния изменения артефакта
 
 ```gherkin
-@US-context.impact.analyze @UC-context.impact.analyze @P0 @context
+@US-context.impact.analyze @UC-context.impact.analyze @P0 @context @accessibility
 Feature: US-context.impact.analyze Изменение артефакта разворачивается в детерминированный список связанных артефактов (F3.1, K4)
 
   Background:
@@ -29,4 +29,10 @@ Feature: US-context.impact.analyze Изменение артефакта раз�
     Given связи артефакта неполные
     When система выполняет анализ влияния
     Then результат помечается «связи неполны» (без ложной полноты)
+
+  Scenario: Доступность отчёта о влиянии для screen reader (a11y)
+    Given пользователь использует screen reader (NVDA / VoiceOver)
+    When отчёт о влиянии отображается в веб-интерфейсе
+    Then список затронутых артефактов и статусы имеют текстовые альтернативы (WCAG 2.1 AA)
+    And навигация достижима с клавиатуры (keyboard-only)
 ```

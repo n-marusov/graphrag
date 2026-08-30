@@ -3,7 +3,7 @@
 # US-mcp.compile.context — Контекст для ИИ-агента через MCP
 
 ```gherkin
-@US-mcp.compile.context @UC-mcp.compile.context @P0 @mcp
+@US-mcp.compile.context @UC-mcp.compile.context @P0 @mcp @accessibility
 Feature: US-mcp.compile.context ИИ-агент получает точный набор артефактов и фактов под задачу через MCP (F4, K17)
 
   Background:
@@ -35,4 +35,10 @@ Feature: US-mcp.compile.context ИИ-агент получает точный н
     Given содержимое корпуса содержит попытку инъекции («игнорируй предыдущие инструкции»)
     When MCP-сервер обрабатывает запрос
     Then система детектирует инъекцию, блокирует запрос и фиксирует SecurityEventEmitted
+
+  Scenario: Доступность статуса компиляции контекста для screen reader (a11y)
+    Given пользователь использует screen reader (NVDA / VoiceOver)
+    When статус компиляции контекста отображается в веб-интерфейсе
+    Then ключевые элементы и статусы имеют текстовые альтернативы (WCAG 2.1 AA)
+    And навигация достижима с клавиатуры (keyboard-only)
 ```
