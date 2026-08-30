@@ -43,8 +43,11 @@
 | Агрегат | Корень | Сущности | Объекты-значения | Границы транзакций | Инварианты |
 |---|---|---|---|---|---|
 | `Answer` | `Answer` | `AnswerSection`, `Citation`, `GroundingCheck` | `AnswerId`, `AnswerStatus`, `Confidence`, `TraceRef` | Генерация и проверка одного ответа | Ответ публикуется только с атрибуцией источников; каждое утверждение ответа прослеживается до чанка/утверждения (provenance) |
+| `Session` | `Session` | `SessionTurn` | `SessionId`, `SessionTitle` | Жизненный цикл одной сессии: создание, добавление обращения, переименование, удаление | Обращения сессии упорядочены по времени; заголовок — первый запрос или имя, заданное пользователем; история сессий хранится на сервере; сессия принадлежит пользователю (MVP — один пользователь) |
 
 > `Query` — не агрегат: запрос — вход без собственных инвариантов; чтение вне доменной модели (CQRS). Извлечение (retrieval) — механизм (vision §2.2), его стратегии (dual-level, PathRAG, PPR) — ADR-DES.API.hybrid-graphrag-composition, в модель не входят. Сверка «результат ↔ источник» (K5) — доменный сервис `ConsistencyChecker`; при расхождении публикуется `ConflictDetected` (потребитель — `artifact-traceability`, агрегат `Contradiction`).
+
+> `Session` — агрегат, введённый по требованию `BR-constraint.ui-session-history` (история сессий веб-интерфейса); среди кандидатов из README не был. Обращение (`SessionTurn`) ссылается на агрегат `Answer` по ID (`AnswerId`). Read-only-граница (`BR-constraint.sso-readonly-access`) распространяется на знания (источники корпуса); данные приложения (сессии) — записываемые (решение владельца продукта, 2026-08-30). Срок хранения и лимиты сессий — открытый вопрос Q4.1 (`specs/open-questions.md`).
 
 ## artifact-traceability — Трассируемость артефактов
 
@@ -93,6 +96,7 @@ Stateless-операции, не влезающие в сущности (реф�
 | `Claim` | `knowledge-graph` | `Claim` | Утверждение с provenance — единица проверяемости |
 | `OntologyModel` | `ontology-layer` | `OntologyVersion` | Версионируемая модель предметной области |
 | `Answer` | `query-answering` | `Answer` | Ответ с grounding и атрибуцией |
+| `Session` | `query-answering` | `Session` | Именованная последовательность обращений пользователя (история диалога) |
 | `ArtifactGraph` | `artifact-traceability` | `ArtifactGraph` | Связи артефактов разработки |
 | `Contradiction` | `artifact-traceability` | `Contradiction` | Противоречие с доказательствами, владельцем и статусом |
 | `LlmRequest` | `llm-contour` | `LlmRequest` | Обращение к модели с проверкой и аудитом |

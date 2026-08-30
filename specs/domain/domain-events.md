@@ -17,10 +17,12 @@
 | `InfluenceComputed` | внешнее | Запрос анализа влияния / изменение артефакта | `artifact-traceability` | Разработчик, архитектор, `context-compiler` | `analysisRunId, artifactId, affected[], depth, stateVersion` |
 | `ConflictDetected` | внешнее | Сверка «результат ↔ источник» (K5) / анализ корпуса | `query-answering` (сверка), `artifact-traceability` | `artifact-traceability` (агрегат `Contradiction`) | `conflictId, artifactPair, evidence[], severity` |
 | `OwnerSignalDelivered` | внешнее | Противоречие зарегистрировано; требуется решение владельца | `artifact-traceability` | Владелец артефакта (контур сигналов) | `signalId, contradictionId, artifactId, evidence[], severity, ownerId` |
-| `ChangeConfirmed` | внешнее | Владелец подтвердил предлагаемое изменение | Владелец (через UI) | `artifact-traceability`, `corpus-ingestion` | `signalId, contradictionId, artifactId, decidedBy, decidedAt` |
-| `ChangeRejected` | внешнее | Владелец отклонил предлагаемое изменение | Владелец (через UI) | `artifact-traceability` | `signalId, contradictionId, artifactId, reason, decidedAt` |
+| `ChangeConfirmed` | внешнее | Владелец подтвердил предлагаемое изменение | Владелец (канал подтверждения — MCP/CLI) | `artifact-traceability`, `corpus-ingestion` | `signalId, contradictionId, artifactId, decidedBy, decidedAt` |
+| `ChangeRejected` | внешнее | Владелец отклонил предлагаемое изменение | Владелец (канал подтверждения — MCP/CLI) | `artifact-traceability` | `signalId, contradictionId, artifactId, reason, decidedAt` |
 | `ContextCompiled` | внешнее | Запрос агента на компиляцию контекста (MCP `compile_context`) | `context-compiler` | ИИ-агент (через MCP), Hand-off | `compilationId, requestId, artifacts[], relations[], tokenEstimate, policy` |
 | `SecurityEventEmitted` | внешнее | Фильтрация утечек, нарушение политик Agent Gateway, аудит обращений | `llm-contour` (также MCP/Gateway для аудита) | IT-безопасность (панели аудита), мониторинг | `eventId, eventCode, severity, actor, resource, timestamp` |
+
+> Каналы подтверждения владельца (`ChangeConfirmed` / `ChangeRejected`) — вне веб-интерфейса: GUI — только чат (F1, `ADR-DES.UI.chat-only-interface`); F3 доставляется через MCP/CLI. В веб-интерфейсе противоречие отображается read-only (`ConflictDetected` → отображение вариантов с provenance, без кнопок подтверждения).
 
 ## Матрица каскадов «событие → события»
 

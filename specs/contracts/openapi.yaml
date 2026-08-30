@@ -1,0 +1,496 @@
+openapi: 3.1.0
+info:
+  title: GraphRAG HTTP API — веб-интерфейс (F1)
+  version: 0.1.0
+  description: |
+    Контракт HTTP API GraphRAG для веб-интерфейса (только чат, F1 —
+    ADR-DES.UI.chat-only-interface). Потребители — тонкий SPA (Vue 3 + Vite +
+    TypeScript, ADR-DES.UI.spa-typescript-frontend) и CLI запросов
+    (BR-constraint.backend-cli-queries). Транспорт — JSON через API Gateway
+    (ADR-DES.API.api-gateway-adoption), маршрутизация `/api/*`. Аутентификация —
+    OIDC-токен корпоративного SSO (ADR-DES.SECURITY.sso-keycloak).
+
+    Границы доступа (BR-constraint.sso-readonly-access, решение владельца
+    продукта 2026-08-30): знания (источники корпуса) — только чтение; данные
+    приложения (история сессий, BR-constraint.ui-session-history) —
+    записываемые.
+
+    Источники контракта: UC-answers.grounding.cited-answer (F1.1, альтернативные
+    потоки A1–A3), specs/domain/aggregates.md (агрегаты `Answer`, `Session`),
+    REQ-NFR-data.maintainability.versioned-provenance (версия индекса в
+    provenance ответа).
+servers:
+  - url: /api/v1
+    description: API Gateway, версия 1
+security:
+  - bearerAuth: []
+tags:
+  - name: sessions
+    description: История сессий веб-интерфейса (BR-constraint.ui-session-history)
+  - name: answers
+    description: Вопросы и проверяемые ответы с grounding и provenance (F1.1)
+paths:
+  /sessions:
+    get:
+      tags: [sessions]
+      operationId: listSessions
+      summary: Список сессий
+      description: |
+        Список сессий пользователя: заголовок (первый запрос сессии или имя,
+        заданное пользователем), дата и время; поиск по заголовкам — параметр `q`.
+      parameters:
+        - name: q
+          in: query
+          description: Подстрока заголовка для поиска по сессиям
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Максимальное число сессий (лимиты хранения — открытый вопрос Q4.1, specs/open-questions.md)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        "200":
+          description: Список сессий (сортировка — по убыванию `updatedAt`)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SessionSummary"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+    post:
+      tags: [sessions]
+      operationId: createSession
+      summary: Создать сессию
+      description: |
+        Создаёт пустую сессию («+ Новая сессия»). Заголовок при отсутствии в
+        запросе формируется из первого запроса сессии
+        (BR-constraint.ui-session-history).
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSessionRequest"
+      responses:
+        "201":
+          description: Сессия создана
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /sessions/{sessionId}:
+    get:
+      tags: [sessions]
+      operationId: getSession
+      summary: Сессия с историей обращений
+      description: Полный состав сессии: заголовок, метки времени и обращения (вопросы и ответы, включая формируемые).
+      parameters:
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "200":
+          description: Сессия с обращениями
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+    patch:
+      tags: [sessions]
+      operationId: renameSession
+      summary: Переименовать сессию
+      description: Обновление заголовка сессии (переименование).
+      parameters:
+        - $ref: "#/components/parameters/SessionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSessionRequest"
+      responses:
+        "200":
+          description: Сессия переименована
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+    delete:
+      tags: [sessions]
+      operationId: deleteSession
+      summary: Удалить сессию
+      description: Удаляет сессию и её обращения (данные приложения).
+      parameters:
+        - $ref: "#/components/parameters/SessionId"
+      responses:
+        "204":
+          description: Сессия удалена
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /answers:
+    post:
+      tags: [answers]
+      operationId: askQuestion
+      summary: Задать вопрос
+      description: |
+        Создаёт обращение (вопрос) и запускает пайплайн ответа
+        (каскад `QueryReceived → QueryAnswered`, UC-answers.grounding.cited-answer).
+        Ответ формируется асинхронно: статус `processing`, результат — через
+        опрос GET /answers/{answerId}. При указании `sessionId` обращение
+        привязывается к сессии (история диалога).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AskQuestionRequest"
+      responses:
+        "202":
+          description: Обращение принято, ответ формируется
+          headers:
+            Location:
+              description: URL для опроса результата (GET /answers/{answerId})
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Answer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /answers/{answerId}:
+    get:
+      tags: [answers]
+      operationId: getAnswer
+      summary: Статус и результат ответа
+      description: |
+        Опрос результата. При `status: processing` поле `phase` указывает этап
+        пайплайна (retrieval / generation) для индикации загрузки.
+      parameters:
+        - $ref: "#/components/parameters/AnswerId"
+      responses:
+        "200":
+          description: Текущее состояние ответа
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Answer"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: OIDC-токен корпоративного SSO (Keycloak); валидируется API Gateway.
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Идентификатор сессии (VO `SessionId`)
+      schema:
+        type: string
+    AnswerId:
+      name: answerId
+      in: path
+      required: true
+      description: Идентификатор ответа (VO `AnswerId`)
+      schema:
+        type: string
+  schemas:
+    Error:
+      type: object
+      required: [error_code, message]
+      properties:
+        error_code:
+          type: string
+          description: |
+            Машинный код ошибки, стабильный для клиента (локализация сообщения —
+            по коду). Примеры: VALIDATION_ERROR, SESSION_NOT_FOUND, GRAPH_TIMEOUT,
+            RATE_LIMITED, INTERNAL_ERROR.
+        message:
+          type: string
+          description: Человекочитаемое описание ошибки
+        details:
+          type: object
+          additionalProperties: true
+          description: Дополнительные сведения (например, поле, нарушившее валидацию)
+    SessionSummary:
+      type: object
+      required: [id, title, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          description: Идентификатор сессии
+        title:
+          type: string
+          description: Заголовок — первый запрос сессии или имя, заданное пользователем
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+          description: Время последнего обращения (сортировка списка)
+    Session:
+      allOf:
+        - $ref: "#/components/schemas/SessionSummary"
+        - type: object
+          required: [turns]
+          properties:
+            turns:
+              type: array
+              items:
+                $ref: "#/components/schemas/SessionTurn"
+    SessionTurn:
+      type: object
+      required: [id, question, createdAt]
+      properties:
+        id:
+          type: string
+          description: Идентификатор обращения
+        question:
+          type: string
+          description: Текст запроса
+        answer:
+          $ref: "#/components/schemas/Answer"
+          description: Ответ; отсутствует, пока обращение не породило ответ
+        createdAt:
+          type: string
+          format: date-time
+    Answer:
+      type: object
+      required: [id, status, createdAt]
+      properties:
+        id:
+          type: string
+          description: Идентификатор ответа (агрегат `Answer`, VO `AnswerId`)
+        status:
+          $ref: "#/components/schemas/AnswerStatus"
+        phase:
+          $ref: "#/components/schemas/AnswerPhase"
+          description: Присутствует при `status: processing`
+        indexVersion:
+          type: string
+          description: |
+            Версия индекса (состояние знаний), на которой построен ответ; часть
+            provenance, отображается в шапке (BR-constraint.ui-header,
+            REQ-NFR-data.maintainability.versioned-provenance). Присутствует после
+            публикации ответа.
+        notice:
+          type: string
+          description: |
+            Сообщение-отказ с объяснением (A1 «источники не найдены»:
+            честный отказ, а не галлюцинация). Присутствует при `status: no_sources`.
+        clarification:
+          type: string
+          description: Уточняющий вопрос вместо ответа (A3). Присутствует при `status: ambiguous`.
+        sections:
+          type: array
+          description: Разделы ответа с пораздельной атрибуцией (A2 — варианты представлены в `contradiction`)
+          items:
+            $ref: "#/components/schemas/AnswerSection"
+        contradiction:
+          $ref: "#/components/schemas/Contradiction"
+          description: Противоречие между источниками (A2). Присутствует при статусе answered в режиме противоречия.
+        citations:
+          type: array
+          description: Сводный список источников для панели «Происхождение»
+          items:
+            $ref: "#/components/schemas/Citation"
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Уверенность ответа (VO `Confidence`). Присутствует после публикации.
+        error:
+          $ref: "#/components/schemas/AnswerError"
+          description: Ошибка пайплайна. Присутствует при `status: failed`.
+        createdAt:
+          type: string
+          format: date-time
+    AnswerStatus:
+      type: string
+      enum: [processing, answered, no_sources, ambiguous, failed]
+      description: |
+        processing — формируется (QueryReceived → QueryAnswered);
+        answered — опубликован с grounding и атрибуцией;
+        no_sources — источники не найдены (A1);
+        ambiguous — запрос двусмыслен, требуется уточнение (A3);
+        failed — ошибка пайплайна.
+    AnswerPhase:
+      type: string
+      enum: [retrieval, generation]
+      description: Этап пайплайна при `status: processing` (индикация «Поиск источников…» / «Генерация ответа…»)
+    AnswerSection:
+      type: object
+      required: [text]
+      properties:
+        heading:
+          type: string
+          description: Заголовок раздела
+        text:
+          type: string
+          description: Текст раздела
+        citations:
+          type: array
+          description: Ссылки, поддерживающие факты раздела (атрибуция)
+          items:
+            $ref: "#/components/schemas/Citation"
+    Citation:
+      type: object
+      required: [source]
+      properties:
+        source:
+          type: string
+          description: Путь к документу корпуса (например, `specs/glossary.md`)
+        title:
+          type: string
+          description: Название источника для панели «Происхождение»
+        chunk:
+          type: string
+          description: Идентификатор чанка (например, «чанк 4/12»)
+        quote:
+          type: string
+          description: Цитируемый фрагмент источника
+    Contradiction:
+      type: object
+      required: [notice, variants]
+      properties:
+        notice:
+          type: string
+          description: Уведомление о противоречии (например, «Найдены противоречия между источниками. Оба варианта представлены ниже.»)
+        variants:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContradictionVariant"
+    ContradictionVariant:
+      type: object
+      required: [label, text]
+      properties:
+        label:
+          type: string
+          description: Метка варианта (например, «Вариант А»)
+        text:
+          type: string
+          description: Текст варианта
+        citations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Citation"
+    AnswerError:
+      type: object
+      required: [error_code, message]
+      properties:
+        error_code:
+          type: string
+          description: Машинный код ошибки пайплайна (например, GRAPH_TIMEOUT)
+        message:
+          type: string
+          description: Описание ошибки
+    CreateSessionRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 200
+          description: Заголовок сессии; при отсутствии формируется из первого запроса
+    UpdateSessionRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+    AskQuestionRequest:
+      type: object
+      required: [question]
+      properties:
+        sessionId:
+          type: string
+          description: Привязка обращения к сессии (история диалога)
+        question:
+          type: string
+          minLength: 1
+          description: Текст запроса
+  responses:
+    Unauthorized:
+      description: Отсутствует или недействителен OIDC-токен
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Ресурс не найден
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ValidationError:
+      description: Запрос не прошёл валидацию (тело или параметры)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimited:
+      description: Превышен лимит запросов (API Gateway)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalError:
+      description: Внутренняя ошибка сервиса
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    GatewayTimeout:
+      description: Таймаут пайплайна ответа (контур LLM, код GRAPH_TIMEOUT)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
