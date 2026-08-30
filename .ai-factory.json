@@ -38,7 +38,7 @@
         "filesystem": false,
         "postgres": false,
         "chromeDevtools": false,
-        "playwright": false
+        "playwright": true
       },
       "managedSkills": {
         "aif": {
