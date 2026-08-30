@@ -4,7 +4,7 @@
 |------|----------|
 | **Статус** | ПРИНЯТО |
 | **Дата** | 2026-08-30 |
-| **Контекст** | GraphRAG имеет два класса внешних потребителей: люди (UI/API через API Gateway, `ADR-DES.API.api-gateway-adoption`) и ИИ-агенты автоматизации разработки (MCP через MCP-сервер/Agent Gateway, `ADR-DES.API.agent-gateway-scheduling-layer`). Агенты могут обращаться и через человеческий шлюз (API Gateway), поэтому аутентификация людей необходима уже в MVP. Прежнее правило `BR-constraint.no-user-auth-in-mvp` (авторизация отсутствует в MVP) заменено решением владельца продукта 2026-08-30 (open-questions.md Q1.10). |
+| **Контекст** | GraphRAG имеет два класса внешних потребителей: люди (UI/API через API Gateway, `ADR-DES.API.api-gateway-adoption`) и ИИ-агенты автоматизации разработки (MCP через MCP-сервер/Agent Gateway, `ADR-DES.API.agent-gateway-scheduling-layer`). Агенты могут обращаться и через человеческий шлюз (API Gateway), поэтому аутентификация людей необходима уже в MVP. Прежнее правило `BR-constraint.no-user-auth-in-mvp` (авторизация отсутствует в MVP) заменено решением владельца продукта 2026-08-30. |
 | **Требование-источник** | BR-constraint.sso-readonly-access; REQ-NFR-security.compliance.llm-contour (граница: фильтрация утечек, события безопасности); ADR-DES.API.api-gateway-adoption; ADR-DES.API.agent-gateway-scheduling-layer; UC-mcp.compile.context (аутентификация агентов, A1 «Нет прав / истёк токен») |
 
 ## Решение

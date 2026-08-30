@@ -7,8 +7,8 @@
 | **Приоритет** | High |
 | **Статус** | `ЗАМЕНЕНО` (2026-08-30) |
 | **Заменено на** | `BR-constraint.sso-readonly-access` (SSO + единый пользователь + read-only + токены агентов) |
-| **Источник** | Решение владельца продукта (2026-08-29); отменено решением 2026-08-30 (open-questions.md Q1.10) |
-| **Связанные требования** | BR-constraint.sso-readonly-access; ADR-DES.SECURITY.sso-keycloak; open-questions.md Q1.10 |
+| **Источник** | Решение владельца продукта (2026-08-29); отменено решением владельца продукта 2026-08-30 |
+| **Связанные требования** | BR-constraint.sso-readonly-access; ADR-DES.SECURITY.sso-keycloak |
 | **Связанные BR** | BR-constraint.sso-readonly-access |
 
 ## Формулировка правила (историческая, отменена)

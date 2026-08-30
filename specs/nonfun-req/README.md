@@ -88,8 +88,8 @@ REQ-NFR-<area>.<qualifier>.<attribute>
 
 | REQ-ID (кандидат) | Описание | Источник |
 |--------------------|----------|----------|
-| `REQ-NFR-ops.availability.rpo-rto` | Допустимый простой и восстановление (RPO/RTO) | [open-questions.md](../open-questions.md) Q1.3, Q1.8 |
-| `REQ-NFR-ops.observability.monitoring-alerting` | Мониторинг и алертинг сопровождения; аудит-следы | [open-questions.md](../open-questions.md) Q1.6, Q2.4 |
+| `REQ-NFR-ops.availability.rpo-rto` | Допустимый простой и восстановление (RPO/RTO) | [open-questions.md](../open-questions.md) |
+| `REQ-NFR-ops.observability.monitoring-alerting` | Мониторинг и алертинг сопровождения; аудит-следы | [open-questions.md](../open-questions.md) |
 
 ## Текущее состояние
 
@@ -110,7 +110,7 @@ REQ-NFR-<area>.<qualifier>.<attribute>
 
 Квалификаторы: используется `performance` (3), `compliance` (3), `maintainability` (3), `observability` (2) и `availability` (1, добавлен 2026-08-30). Области `infra`, `ui`, `ops`, `integration`, `doc` — в перечне, NFR по ним в работе. Сверка «атрибуты качества → покрытие NFR» — проверка полноты набора (W&B: collection completeness; непокрытый атрибут качества — риск для продукта).
 
-> **TBD по целевым значениям.** Часть критериев приёмки содержит целевые значения, определяемые по итогам замера исходного уровня (vision.md §1.4: сроки закрытия TBD — после замера, Фаза 1.5) — помечены `TBD` в файлах NFR; реестр открытых вопросов — [open-questions.md](../open-questions.md) (Q2.2 — критерии приёмки функций).
+> **TBD по целевым значениям.** Часть критериев приёмки содержит целевые значения, определяемые по итогам замера исходного уровня (vision.md §1.4: сроки закрытия TBD — после замера, Фаза 1.5) — помечены `TBD` в файлах NFR; реестр открытых вопросов — [open-questions.md](../open-questions.md) (критерии приёмки функций).
 
 ## Правила оформления
 
