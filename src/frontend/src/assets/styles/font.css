@@ -1,0 +1,37 @@
+/* Шрифты GraphRAG: Inter (текст), JetBrains Mono (пути, версии, SHA).
+   Курсивные начертания не объявляются (BR-constraint.ui-visual-standards). */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  src: url("@/assets/fonts/Inter_1.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  src: url("@/assets/fonts/Inter_1.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  src: url("@/assets/fonts/Inter_1.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  src: url("@/assets/fonts/Inter_1.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  src: url("@/assets/fonts/JetBrainsMono-Regular.ttf") format("truetype");
+}

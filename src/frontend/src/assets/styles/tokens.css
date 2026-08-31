@@ -1,0 +1,53 @@
+/* Дизайн-токены GraphRAG.
+   Источник: BR-constraint.ui-visual-standards (акцент зелёный, контраст WCAG 2.1 AA,
+   паритет тем), ADR-DES.UI.tailwind-css-adoption (токены @theme, тёмная тема по умолчанию). */
+
+:root {
+  /* Тёмная тема (по умолчанию) */
+  --gr-bg: #0b0e14;
+  --gr-surface: #141924;
+  --gr-surface-2: #1c2333;
+  --gr-text: #e6eaf2;
+  --gr-muted: #8a93a6;
+  --gr-faint: #6b7a93;
+  --gr-accent: #22c55e;
+  --gr-success: #34d399;
+  --gr-warning: #fbbf24;
+  --gr-danger: #f87171;
+  --gr-border: #232b3d;
+  --gr-font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gr-font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+}
+
+[data-theme="light"] {
+  /* Светлая тема: та же компоновка, другие цвета (паритет тем) */
+  --gr-bg: #f5f7fa;
+  --gr-surface: #ffffff;
+  --gr-surface-2: #eff1f5;
+  --gr-text: #1a2233;
+  --gr-muted: #5b6472;
+  --gr-faint: #8a93a6;
+  --gr-accent: #15803d;
+  --gr-success: #16a34a;
+  --gr-warning: #b45309;
+  --gr-danger: #dc2626;
+  --gr-border: #d6dbe4;
+}
+
+/* Семантические токены Tailwind v4: утилиты bg-bg, text-text, bg-accent,
+   text-muted, border-border, font-sans, font-mono и т.д. */
+@theme inline {
+  --color-bg: var(--gr-bg);
+  --color-surface: var(--gr-surface);
+  --color-surface-2: var(--gr-surface-2);
+  --color-text: var(--gr-text);
+  --color-muted: var(--gr-muted);
+  --color-faint: var(--gr-faint);
+  --color-accent: var(--gr-accent);
+  --color-success: var(--gr-success);
+  --color-warning: var(--gr-warning);
+  --color-danger: var(--gr-danger);
+  --color-border: var(--gr-border);
+  --font-sans: var(--gr-font-sans);
+  --font-mono: var(--gr-font-mono);
+}
