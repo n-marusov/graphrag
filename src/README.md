@@ -6,9 +6,13 @@ ontology-grounded GraphRAG: индексация корпуса в граф зн
 
 ## Назначение папки
 
-Здесь размещается весь код продукта: ядро, оркестрация пайплайнов, движок запросов,
-MCP-сервер, интеграции и CPU-компоненты. Модули соответствуют функциям продукта
-F1–F4 из [`specs/vision.md`](../specs/vision.md) (§2.1–2.2, единый канон):
+`src/` — umbrella-каталог продуктивной кодовой базы ([ADR-DES.STACK.src-directory-structure](../specs/adr/ADR-DES.STACK.src-directory-structure.md)):
+
+- `frontend/` — веб-интерфейс (SPA, TS/Vue 3, реализован);
+- `backend/` — серверная кодовая база (Go, план): ядро, оркестрация пайплайнов,
+  движок запросов, MCP-сервер, интеграции и CPU-компоненты.
+
+Модули backend соответствуют функциям продукта F1–F4 из [`specs/vision.md`](../specs/vision.md) (§2.1–2.2, единый канон):
 
 | Функция | Область |
 |---|---|
@@ -24,6 +28,7 @@ F1–F4 из [`specs/vision.md`](../specs/vision.md) (§2.1–2.2, единый 
 | Правило | Описание |
 |---|---|
 | **Единый язык — Go** | Серверная кодовая база пишется на Go ([ADR-IMPL.STACK.go-single-language-adoption](../specs/adr/ADR-IMPL.STACK.go-single-language-adoption.md)). Python и Rust исключены; нативный код — только через CGo к зрелым C-библиотекам и по измеримому критерию (профилирование/бенчмарк). Фронтенд — TypeScript (тонкий SPA, [ADR-DES.UI.spa-typescript-frontend](../specs/adr/ADR-DES.UI.spa-typescript-frontend.md)). |
+| **Структура кодовой базы** | Каталог `src/` — umbrella-каталог по [ADR-DES.STACK.src-directory-structure](../specs/adr/ADR-DES.STACK.src-directory-structure.md): `src/frontend/` (SPA, TS/Vue 3) и `src/backend/` (единый Go-модуль: `cmd/` — точки входа, `internal/` — реализация по контейнерам C4) — отдельные корни; фронтенд — вне Go-модуля. |
 | **Спецификации — источник правды** | Scope, границы и архитектурные решения — в [`specs/`](../specs/) (`vision.md`, `glossary.md`, `adr/`). Код не должен противоречить принятым ADR и вижну. Spec-driven development: тесты и код выводятся из требований (FR/US/BR — 100% требование-уровневое покрытие). |
 | **Агент готовит — человек подтверждает** | Код, сгенерированный ИИ, проходит подтверждение человеком: контрактные тесты, ревью. |
 | **Контрактные тесты до реализации** | Эталонные кейсы (K1, K4, K5, K17) фиксируются контрактными тестами до реализации метода. |

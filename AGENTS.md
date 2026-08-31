@@ -25,7 +25,7 @@ graphrag/
 │   ├── vision.md         #   Канон функций F1–F4, scope MVP, roadmap
 │   ├── glossary.md       #   Единый язык предметной области
 │   ├── open-questions.md #   Реестр открытых вопросов
-│   ├── adr/              #   Архитектурные решения (13 принятых ADR)
+│   ├── adr/              #   Архитектурные решения (14 принятых ADR)
 │   ├── c4/               #   C4-диаграммы (уровни 1–2)
 │   ├── domain/           #   Модель предметной области
 │   ├── use-cases/        #   Варианты использования
@@ -33,8 +33,9 @@ graphrag/
 │   ├── business-rules/   #   Бизнес-правила
 │   ├── nonfun-req/       #   Нефункциональные требования
 │   └── qa/               #   QA-гейты и контрольные списки
-├── src/                  # Продуктивная кодовая база: Go-сервер (план) + фронтенд (Vue 3 SPA, реализован)
-│   └── frontend/         #   Тонкий SPA-клиент (F1): слои domain/application/adapters/ui/app
+├── src/                  # Umbrella-каталог кодовой базы (ADR-DES.STACK.src-directory-structure)
+│   ├── frontend/         #   Тонкий SPA-клиент (F1): слои domain/application/adapters/ui/app (реализован)
+│   └── backend/          #   Серверная Go-кодовая база (план): cmd/ — точки входа, internal/ — по контейнерам C4
 ├── tools/                # Инструменты разработки (validate-mermaid.js)
 ├── .ai-factory.json      # Конфигурация AI Factory (скиллы, MCP)
 ├── .gitlab-ci.yml        # Пайплайн CI (валидация mermaid, гейт G1-C4)
