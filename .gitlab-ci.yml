@@ -26,3 +26,13 @@ validate-mermaid:
   script:
     - npm ci
     - npm run validate:mermaid
+
+# Гейт трассируемости требований (BR-constraint.traceability-comments): каждый
+# модуль/тест ссылается на требования в заголовочном комментарии. Скрипт не
+# требует зависимостей — npm ci не нужен.
+validate-traceability:
+  stage: docs
+  image: node:22
+  interruptible: true
+  script:
+    - node tools/validate-traceability.js
