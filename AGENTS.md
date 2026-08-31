@@ -33,7 +33,8 @@ graphrag/
 │   ├── business-rules/   #   Бизнес-правила
 │   ├── nonfun-req/       #   Нефункциональные требования
 │   └── qa/               #   QA-гейты и контрольные списки
-├── src/                  # Продуктивная кодовая база на Go (сейчас только README.md)
+├── src/                  # Продуктивная кодовая база: Go-сервер (план) + фронтенд (Vue 3 SPA, реализован)
+│   └── frontend/         #   Тонкий SPA-клиент (F1): слои domain/application/adapters/ui/app
 ├── tools/                # Инструменты разработки (validate-mermaid.js)
 ├── .ai-factory.json      # Конфигурация AI Factory (скиллы, MCP)
 ├── .gitlab-ci.yml        # Пайплайн CI (валидация mermaid, гейт G1-C4)
