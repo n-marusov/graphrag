@@ -17,15 +17,15 @@
 ## Команды
 
 ```bash
-npm install        # установка зависимостей
-npm run dev        # dev-сервер (Vite)
-npm run build      # production-сборка
-npm run typecheck  # проверка типов (vue-tsc -b)
-npm run test       # прогон тестов (vitest)
-npm run test:watch # тесты в watch-режиме
-npm run lint       # Biome: форматирование + импорты + lint-правила
-npm run lint:fix   # Biome: применить безопасные исправления
-npm run format     # Biome: переформатировать файлы
+pnpm install         # установка зависимостей
+pnpm dev             # dev-сервер (Vite)
+pnpm build           # production-сборка
+pnpm typecheck       # проверка типов (vue-tsc -b)
+pnpm test            # прогон тестов (vitest)
+pnpm test:watch      # тесты в watch-режиме
+pnpm lint            # Biome: форматирование + импорты + lint-правила
+pnpm lint:fix        # Biome: применить безопасные исправления
+pnpm format          # Biome: переформатировать файлы
 ```
 
 ## Переменные окружения
@@ -35,10 +35,10 @@ npm run format     # Biome: переформатировать файлы
 | `VITE_API_BASE_URL` | Базовый URL API (за API Gateway) | `/api/v1` |
 | `VITE_LOG_LEVEL` | Уровень логгера: `debug` \| `verbose` \| `info` \| `warn` \| `error` | `info` |
 | `VITE_USE_MOCK` | Демо-режим без бэкенда (`=1`): in-memory заглушки шлюзов | выкл |
-| `VITE_APP_COMMIT` | Переопределение SHA сборки (приоритет ниже `CI_COMMIT_SHORT_SHA`) | — |
-| `CI_COMMIT_SHORT_SHA` | SHA коммита из GitLab CI (приоритет выше локального git) | — |
+| `VITE_APP_COMMIT` | Переопределение SHA сборки (ниже `CI_COMMIT_SHORT_SHA`) | — |
+| `CI_COMMIT_SHORT_SHA` | SHA коммита из GitLab CI (приоритет выше `VITE_APP_COMMIT` → локальный git → `dev`) | — |
 
-**Демо без бэкенда:** `VITE_USE_MOCK=1 npm run dev` — контент — демо, без фактических данных; реальный контент придёт из API по контракту.
+**Демо без бэкенда:** `VITE_USE_MOCK=1 pnpm dev` — контент — демо, без фактических данных; реальный контент придёт из API по контракту.
 
 ## Версия и SHA сборки
 
@@ -76,7 +76,8 @@ src/
 │   │                #   NoSourcesState, ContradictionView, ErrorState
 │   └── provenance/  #   ProvenancePanel, CitationCard
 ├── app/             # Composition root: bootstrap, router, mock-gateways (dev)
-└── assets/          # Токены (@theme), шрифты, канонические иконки (SVG)
+└── assets/          # Токены (@theme, `src/assets/styles/tokens.css`), шрифты (Inter, JetBrainsMono),
+                     #   канонические иконки (SVG, `src/assets/icons/`)
 ```
 
 Правила:
@@ -108,7 +109,8 @@ src/
 - Контракт: `specs/contracts/openapi.yaml`, `specs/contracts/README.md`
 - Домен: `specs/domain/aggregates.md`, `specs/domain/context-map.md`, `specs/domain/domain-events.md`
 - BR: `BR-constraint.ui-header`, `ui-footer`, `ui-session-history`, `ui-visual-standards`,
-  `web-app-browser-chat`, `sso-readonly-access`
+  `web-app-browser-chat`, `sso-readonly-access`, `pnpm-package-manager`,
+  `traceability-comments`
 - ADR: `ADR-DES.UI.spa-typescript-frontend`, `ADR-DES.UI.tailwind-css-adoption`,
   `ADR-DES.UI.chat-only-interface`
 - План: `.ai-factory/plans/feature-frontend-rewrite.md`
